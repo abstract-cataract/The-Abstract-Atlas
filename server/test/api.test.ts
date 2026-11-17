@@ -5,10 +5,10 @@ import { getHotspot } from '../src/content.js';
 import { FEEDBACK_MS } from '../src/scoring.js';
 import { MemoryRepo } from './memoryRepo.js';
 
-// The guest location's challenge (Ridgely's). Expected scores scale with its question count,
+// The guest location's challenge (Uptown, since the 11/17 first release; was Ridgely's). Expected scores scale with its question count,
 // so adding or removing questions doesn't break these tests.
-const GUEST_HS = 'ridgelys-beacon';
-const GUEST_LOC = 'ridgelys';
+const GUEST_HS = 'uptown-beacon';
+const GUEST_LOC = 'uptown';
 const N = getHotspot(GUEST_HS)!.questions.length;
 // Seconds per question (15 since 11/11). pts(s) = points for a right answer given after s seconds.
 const T = getHotspot(GUEST_HS)!.questions[0]!.timeLimitSeconds;
@@ -87,7 +87,7 @@ describe('guest flow', () => {
     const guest = await newGuest();
     const { json } = await call('GET', '/locations', { headers: guest });
     const byId = Object.fromEntries(json.locations.map((l: any) => [l.id, l.accessible]));
-    expect(byId).toEqual({ ridgelys: true, 'inner-harbor': false, uptown: true, university: false });
+    expect(byId).toEqual({ ridgelys: false, 'inner-harbor': false, uptown: true, university: false });
   });
 
   it('blocks guests from other locations with the list of what signing up unlocks', async () => {
@@ -95,7 +95,7 @@ describe('guest flow', () => {
     const res = await call('POST', '/challenges/inner-harbor-beacon/start', { headers: guest });
     expect(res.status).toBe(403);
     expect(res.json.error.code).toBe('LOCATION_LOCKED');
-    expect(res.json.error.unlockedBySignUp.map((l: any) => l.id)).toEqual(['inner-harbor', 'university']);
+    expect(res.json.error.unlockedBySignUp.map((l: any) => l.id)).toEqual(['university']);
   });
 
   it('never sends correct answers to the client when a run starts', async () => {
@@ -109,15 +109,15 @@ describe('guest flow', () => {
     const guest = await newGuest();
     const result = (await playRun(guest, GUEST_HS)).result;
     expect(result).toMatchObject({ correctAnswers: N, totalQuestions: N, score: N * pts(2), completed: true, badgeEarned: true });
-    expect(result.badge.id).toBe('delight-seeker');
+    expect(result.badge.id).toBe('queen-city-climber');
   });
 
   it("shows the sign-up prompt with unlocked locations when a guest completes Ridgely's", async () => {
     const guest = await newGuest();
     const result = (await playRun(guest, GUEST_HS)).result;
     expect(result.locationCompleted).toBe(true);
-    expect(result.signUpPrompt.badges.map((b: any) => b.id)).toEqual(['delight-seeker']);
-    expect(result.signUpPrompt.unlockedLocations.map((l: any) => l.name)).toEqual(['Inner Harbor', 'University']);
+    expect(result.signUpPrompt.badges.map((b: any) => b.id)).toEqual(['queen-city-climber']);
+    expect(result.signUpPrompt.unlockedLocations.map((l: any) => l.name)).toEqual(['University']);
   });
 
   it('does not show the sign-up prompt to signed-in users', async () => {
@@ -174,9 +174,13 @@ describe('question timing', () => {
 
 describe('accounts and leaderboard', () => {
   it('lets signed-in users play the sign-up locations', async () => {
-    for (const id of ['inner-harbor-beacon', 'university-beacon']) {
+    for (const id of ['university-beacon']) {
       const res = await call('POST', `/challenges/${id}/start`, { headers: user('u1') });
       expect(res.status).toBe(200);
+    }
+    // Charm City is coming soon in the first release: closed even with an account.
+    for (const id of ['ridgelys-beacon', 'inner-harbor-beacon']) {
+      expect((await call('POST', `/challenges/${id}/start`, { headers: user('u1') })).status).toBe(403);
     }
   });
 
@@ -233,7 +237,7 @@ describe('claiming guest progress on sign-up', () => {
     const claim = await call('POST', '/account/claim', { headers: { ...user('newbie', 'newbie@example.com'), ...guest } });
     expect(claim.status).toBe(200);
     expect(claim.json.claimed).toBe(1);
-    expect(claim.json.badges.map((b: any) => b.id)).toEqual(['delight-seeker']);
+    expect(claim.json.badges.map((b: any) => b.id)).toEqual(['queen-city-climber']);
     expect(claim.json.player.isGuest).toBe(false);
     expect(claim.json.player.name).toMatch(/^Explorer-\d{4}$/); // never derived from the email
 
@@ -252,7 +256,7 @@ describe('claiming guest progress on sign-up', () => {
     await playRun(guest, GUEST_HS, { secondsPerQuestion: 1 }); // N * pts(1)
     const headers = user('vet', 'vet@example.com');
     await playRun(headers, GUEST_HS, { secondsPerQuestion: 6 }); // N * pts(6)
-    await playRun(headers, 'inner-harbor-beacon', { secondsPerQuestion: 2 });
+    await playRun(headers, 'university-beacon', { secondsPerQuestion: 2 });
 
     const claim = await call('POST', '/account/claim', { headers: { ...headers, ...guest } });
     const fh = claim.json.results.find((r: any) => r.hotspotId === GUEST_HS);

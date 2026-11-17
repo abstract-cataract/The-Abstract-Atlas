@@ -63,6 +63,7 @@ export const LOCATIONS: Location[] = [
     tagline: 'Rowhouses in the shadow of Camden Yards',
     hotspotIds: ['ridgelys-beacon'],
     guestAccessible: true,
+    comingSoon: true, // first release (11/17) is Queen City only
   },
   {
     id: 'inner-harbor',
@@ -70,6 +71,7 @@ export const LOCATIONS: Location[] = [
     tagline: "Baltimore's historic waterfront heart",
     hotspotIds: ['inner-harbor-beacon'],
     guestAccessible: false,
+    comingSoon: true, // first release (11/17) is Queen City only
   },
   // Federal Hill is off the map for now (11/11). Uncomment to bring it back.
   // {

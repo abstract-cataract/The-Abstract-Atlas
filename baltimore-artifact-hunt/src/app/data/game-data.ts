@@ -23,6 +23,7 @@ export const CITY_LOCATIONS: CityLocation[] = [
     name: "Ridgely's",
     tagline: 'Rowhouses in the shadow of Camden Yards',
     hotspotIds: ['ridgelys-beacon'],
+    comingSoon: true, // first release (11/17) is Queen City only
   },
   {
     id: 'inner-harbor',
@@ -30,6 +31,7 @@ export const CITY_LOCATIONS: CityLocation[] = [
     name: 'Inner Harbor',
     tagline: "Baltimore's historic waterfront heart",
     hotspotIds: ['inner-harbor-beacon'],
+    comingSoon: true, // first release (11/17) is Queen City only
   },
   // Federal Hill is off the map for now (11/11). Uncomment to bring it back.
   // {
@@ -86,6 +88,7 @@ export const CITIES: City[] = [
     id: 'baltimore',
     name: 'Charm City',
     tagline: "Baltimore: Ridgely's and the Inner Harbor",
+    comingSoon: true, // first release (11/17) is Queen City only
     locationIds: ['ridgelys', 'inner-harbor'], // Federal Hill removed for now: 'federal-hill'
   },
 ];
@@ -312,6 +315,7 @@ export const HOTSPOTS: Hotspot[] = [
     characters: [
       {
         id: 'jesus-saves-guy',
+        comingSoon: true, // until his picture is drawn
         name: 'The "Jesus Saves!" Guy',
         // photo: 'images/characters/jesus-saves-guy.jpg', // <- uncomment once the picture is in public/images/characters/
         // was: 'PLACEHOLDER — a short story about who he is goes here.'

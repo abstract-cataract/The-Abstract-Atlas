@@ -23,12 +23,20 @@
 
   <!-- Cities. Click one to open its parallax scene with a house for each location. -->
   <div class="city-grid">
-    <a class="location-card city-card" *ngFor="let city of cities" [routerLink]="['/city', city.id]" [attr.data-city]="city.id">
+    <ng-container *ngFor="let city of cities">
+    <!-- A city that isn't open yet (first release: Charm City) -->
+    <div class="location-card city-card city-card-soon" *ngIf="city.comingSoon" [attr.data-city]="city.id" aria-disabled="true">
+      <span class="soon-tag">Coming soon</span>
+      <h2>{{ city.name }}</h2>
+      <p>{{ city.tagline }}</p>
+    </div>
+    <a class="location-card city-card" *ngIf="!city.comingSoon" [routerLink]="['/city', city.id]" [attr.data-city]="city.id">
       <h2>{{ city.name }}</h2>
       <p>{{ city.tagline }}</p>
       <p class="unlock-note" *ngIf="isCityLocked(city)">🔒 Sign up to unlock</p>
       <app-progress-bar [pct]="progress.getCityProgressPct(city.id)"></app-progress-bar>
     </a>
+    </ng-container>
   </div>
 
   <!-- The previous per-location grid is kept below for reference. Locations now live inside each city's scene. -->

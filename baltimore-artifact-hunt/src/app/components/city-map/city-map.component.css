@@ -125,3 +125,24 @@
   border-color: rgba(255, 255, 255, 0.2);
   opacity: 0.6;
 }
+
+/* First release: a city that isn't open yet */
+.city-card-soon {
+  position: relative;
+  cursor: default;
+  filter: grayscale(0.85);
+  opacity: 0.7;
+}
+.city-card-soon .soon-tag {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}

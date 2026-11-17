@@ -60,6 +60,8 @@ export interface Character {
   coverArt?: string;
   /** Issue number on the cover tag. Defaults to the character's place in the list (No. 1, No. 2...). */
   issue?: number;
+  /** Listed with a "Coming soon" tag; their cover doesn't open yet (e.g. while their picture is being drawn). */
+  comingSoon?: boolean;
 }
 
 export type ChallengeType = 'trivia' | 'mini-game';
@@ -122,4 +124,6 @@ export interface City {
   name: string;
   tagline: string;
   locationIds: string[];
+  /** Shown on the home page as "Coming soon" and can't be opened yet. */
+  comingSoon?: boolean;
 }

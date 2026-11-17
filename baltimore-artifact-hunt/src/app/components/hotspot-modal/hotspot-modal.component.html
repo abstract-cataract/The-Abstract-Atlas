@@ -71,11 +71,11 @@
       <div class="modal-kicker">Characters</div>
       <h2>People of {{ hotspot.name }}</h2>
       <p class="no-characters" *ngIf="!hotspot.characters?.length">The people of {{ hotspot.name }} are coming soon.</p>
-      <article class="character" *ngFor="let c of hotspot.characters; let i = index" tabindex="0" role="button" [attr.aria-label]="'Open ' + c.name" (click)="openCover(i)" (keydown.enter)="openCover(i)">
+      <article class="character" *ngFor="let c of hotspot.characters; let i = index" [class.character-soon]="c.comingSoon" [attr.tabindex]="c.comingSoon ? null : 0" [attr.role]="c.comingSoon ? null : 'button'" [attr.aria-label]="c.comingSoon ? c.name + ', coming soon' : 'Open ' + c.name" (click)="openCover(i)" (keydown.enter)="openCover(i)">
         <img *ngIf="c.photo; else noPhoto" class="character-photo" [src]="c.photo" [alt]="'Photo of ' + c.name" loading="lazy" />
         <ng-template #noPhoto><div class="character-photo character-photo-empty" aria-hidden="true">👤</div></ng-template>
         <div class="character-text">
-          <h3>{{ c.name }}</h3>
+          <h3>{{ c.name }} <span class="soon-tag" *ngIf="c.comingSoon">Coming soon</span></h3>
           <p>{{ c.story }}</p>
         </div>
       </article>

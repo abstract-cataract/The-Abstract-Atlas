@@ -31,6 +31,7 @@ export class HotspotModalComponent {
   constructor(public progress: ProgressService, public api: GameApiService, private gameData: GameDataService) {}
 
   openCover(index: number) {
+    if (this.hotspot.characters?.[index]?.comingSoon) return; // their cover isn't ready yet
     this.coverIndex = index;
   }
   closeCover() {
