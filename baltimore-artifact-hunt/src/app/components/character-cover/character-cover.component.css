@@ -354,3 +354,33 @@
   rotate: -3deg;
   filter: drop-shadow(0.6cqw 0.6cqw 0 #1a1410) drop-shadow(0 0 1.5cqw rgba(0, 0, 0, 0.6));
 }
+
+/* 11/19: COIN FLIP landing (the one the game uses now, set in character-cover.component.ts line 7).
+   The cover spins like a flipped coin and lands face up, with Jules already on it.
+   --cc-coin-time: how long the flip takes (3s). Make it bigger to slow it down more.
+   Everything else (logo, sticker, story card, shine) waits until the coin is almost down. */
+.cc-overlay {
+  --cc-coin-time: 3s;
+}
+.play.coin .cc-cover { animation: cc-coin var(--cc-coin-time) cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+.play.coin .cc-art { animation: none; } /* Jules flips with the cover instead of popping in */
+.play.coin .cc-logo,
+.play.coin .cc-logo-img,
+.play.coin .cc-issue { animation-delay: calc(var(--cc-coin-time) * 0.8); }
+.play.coin .cc-sticker { animation-delay: calc(var(--cc-coin-time) * 0.85); }
+.play.coin .cc-story { animation-delay: calc(var(--cc-coin-time) * 0.75); }
+.play.coin .cc-shine { animation-delay: calc(var(--cc-coin-time) * 0.9); }
+@keyframes cc-coin {
+  0% { transform: rotateY(1080deg) scale(0.3); opacity: 0; }
+  15% { opacity: 1; }
+  80% { transform: rotateY(-10deg) scale(1.04); }
+  90% { transform: rotateY(4deg) scale(0.99) rotate(-2deg); }
+  100% { transform: rotate(-2deg); }
+}
+
+/* 11/19: the character's title line, in quotes */
+.cc-story .cc-tagline {
+  font-style: italic;
+  font-weight: bold;
+  font-size: 1.15em;
+}

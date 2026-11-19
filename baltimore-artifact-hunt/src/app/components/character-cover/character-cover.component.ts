@@ -3,8 +3,8 @@ import { Component, ElementRef, EventEmitter, HostListener, Inject, Input, OnDes
 import { Character } from '../../models/game.models';
 
 /** How the cover lands. Change COVER_ENTRANCE to try the others. */
-export type CoverEntrance = 'slap' | 'spin' | 'paper';
-export const COVER_ENTRANCE: CoverEntrance = 'slap';
+export type CoverEntrance = 'slap' | 'spin' | 'paper' | 'coin'; // 11/19: added 'coin'
+export const COVER_ENTRANCE: CoverEntrance = 'coin'; // 11/19: coin flip; was 'slap'
 
 /**
  * Your Abstract Atlas logo for the cover masthead (900 x 300 PNG, transparent).
@@ -78,9 +78,10 @@ export class CharacterCoverComponent implements OnInit, OnDestroy {
     this.host.nativeElement.remove();
   }
 
-  /** The full story, split into paragraphs on blank lines. Falls back to the short story. */
+  /** The full story, split into paragraphs on blank lines. (11/19: the short story now shows above it, in quotes.) */
   get paragraphs(): string[] {
-    const text = this.character.fullStory ?? this.character.story ?? '';
+    const text = this.character.fullStory ?? '';
+    // was: const text = this.character.fullStory ?? this.character.story ?? '';
     return text.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
   }
 

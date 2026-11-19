@@ -43,6 +43,8 @@
       <span class="cc-kicker">PEOPLE OF {{ locationName | uppercase }}</span>
       <h2>{{ character.name }}</h2>
       <p class="cc-bio" *ngIf="character.bio">{{ character.bio }}</p>
+      <!-- 11/19: the short title line, in quotes, above the full story -->
+      <p class="cc-tagline" *ngIf="character.story">&ldquo;{{ character.story }}&rdquo;</p>
       <p *ngFor="let p of paragraphs">{{ p }}</p>
       <p class="cc-where" *ngIf="character.spotted">{{ character.spotted }}</p>
     </article>

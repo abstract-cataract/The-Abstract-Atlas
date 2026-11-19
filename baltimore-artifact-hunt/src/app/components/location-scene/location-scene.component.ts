@@ -74,6 +74,8 @@ export class LocationSceneComponent implements OnInit, AfterViewInit, OnDestroy 
   leaderboardVisible = false;
 
   private parallaxInstance: any = null;
+  /** 11/19: true while a modal (location, characters, leaderboard) is open, so the map behind it holds still. */
+  private parallaxPaused = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -160,6 +162,18 @@ export class LocationSceneComponent implements OnInit, AfterViewInit, OnDestroy 
     });
     this.parallaxInstance.friction(0.12, 0.12);
     this.parallaxInstance.scalar(9.0, 6.0);
+    if (this.parallaxPaused) this.parallaxInstance.disable?.(); // rebuilt while a modal is open: stay paused
+  }
+
+  /** 11/19: freeze the map's parallax while a modal is open; it picks back up when you're back on the map. */
+  private pauseParallax() {
+    this.parallaxPaused = true;
+    this.parallaxInstance?.disable?.();
+  }
+
+  private resumeParallax() {
+    this.parallaxPaused = false;
+    this.parallaxInstance?.enable?.();
   }
 
   /** "Enable tilt" button (iOS 13+ asks permission for motion sensors, and only from a tap). */
@@ -261,6 +275,7 @@ export class LocationSceneComponent implements OnInit, AfterViewInit, OnDestroy 
     }
     if (!this.isUnlocked(hotspot)) return;
 
+    this.pauseParallax(); // 11/19: hold the map still while this location's modal is open
     const beaconEl = document.getElementById('beacon-' + beaconId);
     const zoomWrap = this.zoomWrapEl?.nativeElement;
     if (beaconEl && zoomWrap) {
@@ -287,6 +302,9 @@ export class LocationSceneComponent implements OnInit, AfterViewInit, OnDestroy 
 
   toggleLeaderboard() {
     this.leaderboardVisible = !this.leaderboardVisible;
+    // 11/19: the leaderboard is a modal too
+    if (this.leaderboardVisible) this.pauseParallax();
+    else if (!this.activeHotspot) this.resumeParallax();
   }
 
   closeModal() {
@@ -299,6 +317,7 @@ export class LocationSceneComponent implements OnInit, AfterViewInit, OnDestroy 
       }
       this.hintVisible = true;
       this.activeHotspot = null;
+      if (!this.leaderboardVisible) this.resumeParallax(); // 11/19: back on the map, parallax resumes
     }, 150);
   }
 }

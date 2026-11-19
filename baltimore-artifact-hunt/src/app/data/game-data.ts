@@ -373,6 +373,20 @@ export const HOTSPOTS: Hotspot[] = [
         id: 'jules-redrun',
         name: 'Jules Redrun',
         story: 'Everywhere and not',
+        // 11/19: Jules's full story (blank lines = new paragraphs)
+        fullStory: `Everything may seem normal.
+
+You go about your day, foot by foot like everyone else.
+
+You get your cookout trays and Chex and wings, but damnit…something doesn't feel right.
+
+No sauces in the bags. (Well, that's actually pretty normal.) Jamming your foot into something you tried to avoid, losing the keys to your car when you're already late.
+
+Then it hits you, all the little inconveniences throughout the day only hit you. All the signs that he's around.
+
+Jules Redrun. You've probably seen him, maybe talked to him without knowing so, or thought you've heard him speak, because he's everywhere…and not. Your barber, your bartender, your socks, your missing nail. Hell, he's probably your Honda Civic outside right now, but he's out there somewhere, blending into your world right before your eyes.
+
+Oh, and he's always dressed for the occasion. He wears that tie like it gives him powers or something.`,
         // Cover layers (11/18). Same file names = just drop the full-size versions in public/images/characters/.
         coverBackground: 'images/characters/jules-redrun-bg.jpg',
         coverFlag: 'images/characters/jules-redrun-flag.png',
