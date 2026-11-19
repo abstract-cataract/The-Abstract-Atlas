@@ -11,7 +11,7 @@ export const COVER_ENTRANCE: CoverEntrance = 'slap';
  * Put the file in public/images/ and set this to its path, e.g. 'images/abstract-atlas-logo.png'.
  * While it's null, the cover shows a text placeholder.
  */
-export const COVER_LOGO_SRC: string | null = null;
+export const COVER_LOGO_SRC: string | null = 'images/abstract-atlas-logo.png'; // 11/18 your logo; was: null
 
 /**
  * A character's page, shown as a comic cover (11/11).

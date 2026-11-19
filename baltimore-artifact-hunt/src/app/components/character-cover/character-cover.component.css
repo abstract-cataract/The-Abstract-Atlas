@@ -329,3 +329,28 @@
   object-fit: contain;
   object-position: left top;
 }
+
+/* 11/18: no name on the cover, your logo top-left, flag bigger and above the person's head.
+   Numbers to play with:
+   --cc-flag-left / --cc-flag-top: where the flag's top-left corner sits (0% = cover's left/top edge)
+   --cc-flag-width: how wide the flag is
+   --cc-art-top: where the person starts (lower = more room for the flag) */
+.cc-cover {
+  --cc-art-top: 27%;
+  --cc-flag-left: 34%;
+  --cc-flag-top: 13%;
+  --cc-flag-width: 58%;
+}
+.cc-flag img {
+  inset: auto;
+  left: var(--cc-flag-left);
+  top: var(--cc-flag-top);
+  width: var(--cc-flag-width);
+  height: auto;
+  object-fit: contain;
+}
+.cc-logo-img {
+  width: 24%;
+  rotate: -3deg;
+  filter: drop-shadow(0.6cqw 0.6cqw 0 #1a1410) drop-shadow(0 0 1.5cqw rgba(0, 0, 0, 0.6));
+}
