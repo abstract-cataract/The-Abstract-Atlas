@@ -373,6 +373,10 @@ export const HOTSPOTS: Hotspot[] = [
         id: 'jules-redrun',
         name: 'Jules Redrun',
         story: 'Everywhere and not',
+        // Cover layers (11/18). Same file names = just drop the full-size versions in public/images/characters/.
+        coverBackground: 'images/characters/jules-redrun-bg.jpg',
+        coverFlag: 'images/characters/jules-redrun-flag.png',
+        coverArt: 'images/characters/jules-redrun.png',
       },
     ],
     unlockRequires: [],

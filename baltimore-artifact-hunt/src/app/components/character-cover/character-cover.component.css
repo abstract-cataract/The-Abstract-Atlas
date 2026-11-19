@@ -51,12 +51,14 @@
   container-type: inline-size;
 }
 .cc-bg,
+.cc-flag,
 .cc-art {
   position: absolute;
   inset: 0;
   transition: translate 0.15s ease-out;
 }
 .cc-bg img,
+.cc-flag img,
 .cc-art img {
   position: absolute;
   inset: 0;
@@ -307,4 +309,23 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .play, .play * { animation: none !important; }
+}
+
+/* 11/18: fit the drawn layers under the masthead and name.
+   The person and flag start lower on the cover so the logo and name stay readable.
+   Change these two numbers to move them up or down (0% = top of the cover). */
+.cc-cover {
+  --cc-art-top: 24%;
+  --cc-flag-top: 31%;
+}
+.cc-art img {
+  top: var(--cc-art-top);
+  height: calc(100% - var(--cc-art-top));
+  object-fit: contain;
+}
+.cc-flag img {
+  top: var(--cc-flag-top);
+  height: calc(100% - var(--cc-flag-top));
+  object-fit: contain;
+  object-position: left top;
 }

@@ -11,6 +11,11 @@
         <div class="cc-dots"></div>
       </div>
 
+      <!-- Layer 1.5 (11/18, optional): a flag or prop on its own layer, between the background and the person. -->
+      <div class="cc-flag" *ngIf="character.coverFlag && !flagFailed" [style.translate]="flagShift">
+        <img [src]="character.coverFlag" alt="" (error)="flagFailed = true" />
+      </div>
+
       <!-- Layer 2: the person, cut out. Placeholder until coverArt is set. -->
       <div class="cc-art" [style.translate]="artShift">
         <img *ngIf="character.coverArt && !artFailed" [src]="character.coverArt" [alt]="character.name" (error)="artFailed = true" />

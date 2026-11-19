@@ -58,6 +58,8 @@ export interface Character {
   coverBackground?: string;
   /** Cover layer 2, the person cut out: e.g. 'images/characters/jesus-saves-guy.png' (same size, transparent). */
   coverArt?: string;
+  /** Optional cover layer 3 (11/18), e.g. a flag or prop on its own layer: 'images/characters/jules-redrun-flag.png' (same size, transparent). Sits behind the person. */
+  coverFlag?: string;
   /** Issue number on the cover tag. Defaults to the character's place in the list (No. 1, No. 2...). */
   issue?: number;
   /** Listed with a "Coming soon" tag; their cover doesn't open yet (e.g. while their picture is being drawn). */

@@ -41,8 +41,10 @@ export class CharacterCoverComponent implements OnInit, OnDestroy {
   logoFailed = false;
   bgFailed = false;
   artFailed = false;
+  flagFailed = false;
   bgShift = '0px 0px';
   artShift = '0px 0px';
+  flagShift = '0px 0px';
 
   private tiltBase: { beta: number; gamma: number } | null = null;
   private readonly onTilt = (e: DeviceOrientationEvent) => {
@@ -90,12 +92,14 @@ export class CharacterCoverComponent implements OnInit, OnDestroy {
   resetShift() {
     this.bgShift = '0px 0px';
     this.artShift = '0px 0px';
+    this.flagShift = '0px 0px';
   }
 
   /** x, y from -0.5 to 0.5. The person moves the opposite way from the background, and further. */
   private shift(x: number, y: number) {
     this.bgShift = `${(x * -6).toFixed(1)}px ${(y * -6).toFixed(1)}px`;
     this.artShift = `${(x * 14).toFixed(1)}px ${(y * 10).toFixed(1)}px`;
+    this.flagShift = `${(x * 6).toFixed(1)}px ${(y * 4).toFixed(1)}px`; // in between the two
   }
 
   @HostListener('document:keydown.escape')
