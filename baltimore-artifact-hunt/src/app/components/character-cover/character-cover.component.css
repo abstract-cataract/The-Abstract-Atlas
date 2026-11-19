@@ -15,10 +15,10 @@
 }
 .cc-stage {
   display: grid;
-  grid-template-columns: minmax(0, 360px) minmax(0, 440px);
+  grid-template-columns: minmax(0, 480px) minmax(0, 540px);
+  width: min(100%, 1050px);
   gap: 28px;
   align-items: center;
-  width: min(100%, 860px);
   perspective: 1100px;
 }
 .cc-close {
@@ -336,10 +336,10 @@
    --cc-flag-width: how wide the flag is
    --cc-art-top: where the person starts (lower = more room for the flag) */
 .cc-cover {
-  --cc-art-top: 27%;
-  --cc-flag-left: 34%;
+  --cc-art-top: 0%;
+  --cc-flag-left: 0%;
   --cc-flag-top: 13%;
-  --cc-flag-width: 58%;
+  --cc-flag-width: 68%;
 }
 .cc-flag img {
   inset: auto;
@@ -350,7 +350,7 @@
   object-fit: contain;
 }
 .cc-logo-img {
-  width: 24%;
+  width: 12%;
   rotate: -3deg;
   filter: drop-shadow(0.6cqw 0.6cqw 0 #1a1410) drop-shadow(0 0 1.5cqw rgba(0, 0, 0, 0.6));
 }
