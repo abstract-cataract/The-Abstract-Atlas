@@ -116,13 +116,13 @@ export const HOTSPOTS: Hotspot[] = [
     triviaQuestions: [
       q("ih-1", "The ship docked at the Inner Harbor was the last all-sail warship the U.S. Navy built. What's its name?", ["USS Constellation", "USS Constitution", "USS Maryland", "Pride of Baltimore"], 0, { image: "images/trivia/ih-1.svg" }),
       q("ih-2", "What's the name of the googly-eyed machine that eats trash where the Jones Falls meets the harbor?", ["Mr. Trash Wheel", "Captain Trash Can", "The Harbor Muncher", "Sir Scoops-a-Lot"], 0, { image: "images/trivia/ih-2.svg" }),
-      q("ih-3", "Besides the river's current, what powers Mr. Trash Wheel?", ["Solar panels", "A wind turbine", "A diesel engine", "A giant hamster"], 0, { image: "images/trivia/ih-3.svg" }),
-      q("ih-4", "The World Trade Center on the harbor is the world's tallest building with how many equal sides?", ["5", "4", "6", "8"], 0, { image: "images/trivia/ih-4.svg" }),
+      // q("ih-3", "Besides the river's current, what powers Mr. Trash Wheel?", ["Solar panels", "A wind turbine", "A diesel engine", "A giant hamster"], 0, { image: "images/trivia/ih-3.svg" }), // 11/20: 5 questions per location
+      // q("ih-4", "The World Trade Center on the harbor is the world's tallest building with how many equal sides?", ["5", "4", "6", "8"], 0, { image: "images/trivia/ih-4.svg" }), // 11/20: 5 questions per location
       q("ih-5", "Which giant red neon sign glows across the water at night?", ["Domino Sugars", "Natty Boh", "Old Bay", "Utz"], 0, { image: "images/trivia/ih-5.svg" }),
-      q("ih-6", "Which Inner Harbor building has a tropical rainforest on its roof?", ["The National Aquarium", "The Maryland Science Center", "Harborplace", "The Power Plant"], 0, { image: "images/trivia/ih-6.svg" }),
-      q("ih-7", "The Harborplace pavilions first opened in what year?", ["1980", "1966", "1992", "2001"], 0, { image: "images/trivia/ih-7.svg" }),
+      // q("ih-6", "Which Inner Harbor building has a tropical rainforest on its roof?", ["The National Aquarium", "The Maryland Science Center", "Harborplace", "The Power Plant"], 0, { image: "images/trivia/ih-6.svg" }), // 11/20: 5 questions per location
+      // q("ih-7", "The Harborplace pavilions first opened in what year?", ["1980", "1966", "1992", "2001"], 0, { image: "images/trivia/ih-7.svg" }), // 11/20: 5 questions per location
       q("ih-8", "The famous paddle boats on the harbor are shaped like what?", ["Dragons", "Ducks", "Swans", "Crabs"], 0, { image: "images/trivia/ih-8.svg" }),
-      q("ih-9", "In 1904, what disaster wiped out much of downtown near the old waterfront?", ["The Great Baltimore Fire", "A hurricane", "A flood", "An earthquake"], 0, { image: "images/trivia/ih-9.svg" }),
+      // q("ih-9", "In 1904, what disaster wiped out much of downtown near the old waterfront?", ["The Great Baltimore Fire", "A hurricane", "A flood", "An earthquake"], 0, { image: "images/trivia/ih-9.svg" }), // 11/20: 5 questions per location
       q("ih-10", "Baltimoreans put Old Bay on almost everything. What was it made for?", ["Steamed crabs", "Pizza", "French fries", "Popcorn"], 0, { image: "images/trivia/ih-10.svg", wrongResponse: "On THAT? Okay, maybe. But that's not what it was made for." }),
       // Before 11/12 (kept for reference):
       // q('ih-1', 'In what year was the Inner Harbor area founded?', ['1629', '1729', '1829', '1929'], 1),
@@ -292,16 +292,16 @@ export const HOTSPOTS: Hotspot[] = [
     },
     challengeType: 'trivia',
     triviaQuestions: [
-      q("up-1", "How many stops are on Charlotte's light rail, the LYNX Blue Line?", ["26", "18", "32", "41"], 0, { image: "images/trivia/up-1.svg" }),
+      // q("up-1", "How many stops are on Charlotte's light rail, the LYNX Blue Line?", ["26", "18", "32", "41"], 0, { image: "images/trivia/up-1.svg" }), // 11/20: 5 questions per location
       q("up-2", "Which light rail stop drops you off in the heart of Uptown?", ["CTC/Arena", "Scaleybark", "Tom Hunter", "Old Pineville"], 0, { image: "images/trivia/up-2.svg" }),
       q("up-3", "Which Uptown bar has a downstairs dance room?", ["Retro", "The Rooftop", "Cellar Door", "The Library"], 0, { image: "images/trivia/up-3.svg" }),
-      q("up-4", "How many wards is Uptown split into?", ["4", "2", "6", "8"], 0, { image: "images/trivia/up-4.svg" }),
+      // q("up-4", "How many wards is Uptown split into?", ["4", "2", "6", "8"], 0, { image: "images/trivia/up-4.svg" }), // 11/20: 5 questions per location
       q("up-5", "What do you call someone from Charlotte?", ["A Charlottean", "A Charlottite", "A Queen Citizen", "A Charlotter"], 0, { image: "images/trivia/up-5.svg", wrongResponse: "Close, but a real local would know that one." }),
-      q("up-6", "Which British general called Charlotte \"a hornet's nest of rebellion\"?", ["Lord Cornwallis", "William Howe", "John Burgoyne", "Henry Clinton"], 0, { image: "images/trivia/up-6.svg" }),
+      // q("up-6", "Which British general called Charlotte \"a hornet's nest of rebellion\"?", ["Lord Cornwallis", "William Howe", "John Burgoyne", "Henry Clinton"], 0, { image: "images/trivia/up-6.svg" }), // 11/20: 5 questions per location
       q("up-7", "Locals call the corner of Trade and Tryon:", ["The Square", "The Crossroads", "The Plaza", "The Corner"], 0, { image: "images/trivia/up-7.svg" }),
-      q("up-8", "Charlotte is named after the wife of which British king?", ["George III", "Henry VIII", "Charles II", "William III"], 0, { image: "images/trivia/up-8.svg" }),
+      // q("up-8", "Charlotte is named after the wife of which British king?", ["George III", "Henry VIII", "Charles II", "William III"], 0, { image: "images/trivia/up-8.svg" }), // 11/20: 5 questions per location
       q("up-9", "Bronze statues of what animal guard the gates of the football stadium in Uptown?", ["Panthers", "Hornets", "Eagles", "Lions"], 0, { image: "images/trivia/up-9.svg" }),
-      q("up-10", "What sits on top of the tallest building in North Carolina, in Uptown?", ["A crown", "A dome", "A flagpole", "A glass pyramid"], 0, { image: "images/trivia/up-10.svg" }),
+      // q("up-10", "What sits on top of the tallest building in North Carolina, in Uptown?", ["A crown", "A dome", "A flagpole", "A glass pyramid"], 0, { image: "images/trivia/up-10.svg" }), // 11/20: 5 questions per location
       // Before 11/12 (kept for reference):
       // q('up-1', 'Charlotte is nicknamed the:', ['Queen City', 'Steel City', 'Motor City', 'Windy City'], 0),
       // q('up-2', 'Charlotte was named for the wife of which British king?', ['George III', 'Henry VIII', 'Louis XIV', 'Charles II'], 0),
@@ -355,11 +355,11 @@ export const HOTSPOTS: Hotspot[] = [
       q("un-2", "What animal statue stands outside Woodward Hall?", ["An eagle", "A lion", "A horse", "A bear"], 0, { image: "images/trivia/un-2.svg" }),
       q("un-3", "Which energy drink's trucks are always rolling around campus?", ["Red Bull", "Monster", "Celsius", "Bang"], 0, { image: "images/trivia/un-3.svg" }),
       q("un-4", "Which building did a deer once smash its way out of?", ["Woodward Hall", "Atkins Library", "Belk Hall", "The Student Union"], 0, { image: "images/trivia/un-4.svg" }),
-      q("un-5", "UNC Charlotte's athletic teams are called the:", ["49ers", "Tar Heels", "Wolfpack", "Blue Devils"], 0, { image: "images/trivia/un-5.svg" }),
-      q("un-6", "The '49ers' name nods to which part of the region's history?", ["The gold rush", "The railroad boom", "The tobacco trade", "The shipbuilding era"], 0, { image: "images/trivia/un-6.svg" }),
-      q("un-7", "UNC Charlotte began in 1946 as a college center for returning:", ["World War II veterans", "Bank employees", "Textile workers", "Race car drivers"], 0, { image: "images/trivia/un-7.svg" }),
-      q("un-8", "Which light rail line was extended to UNC Charlotte in 2018?", ["The LYNX Blue Line", "The Red Line", "The Orange Line", "The Gold Line"], 0, { image: "images/trivia/un-8.svg" }),
-      q("un-9", "The area around the campus, north of Uptown, is often called:", ["University City", "Old Town", "Harbor District", "The Heights"], 0, { image: "images/trivia/un-9.svg" }),
+      // q("un-5", "UNC Charlotte's athletic teams are called the:", ["49ers", "Tar Heels", "Wolfpack", "Blue Devils"], 0, { image: "images/trivia/un-5.svg" }), // 11/20: 5 questions per location
+      // q("un-6", "The '49ers' name nods to which part of the region's history?", ["The gold rush", "The railroad boom", "The tobacco trade", "The shipbuilding era"], 0, { image: "images/trivia/un-6.svg" }), // 11/20: 5 questions per location
+      // q("un-7", "UNC Charlotte began in 1946 as a college center for returning:", ["World War II veterans", "Bank employees", "Textile workers", "Race car drivers"], 0, { image: "images/trivia/un-7.svg" }), // 11/20: 5 questions per location
+      // q("un-8", "Which light rail line was extended to UNC Charlotte in 2018?", ["The LYNX Blue Line", "The Red Line", "The Orange Line", "The Gold Line"], 0, { image: "images/trivia/un-8.svg" }), // 11/20: 5 questions per location
+      // q("un-9", "The area around the campus, north of Uptown, is often called:", ["University City", "Old Town", "Harbor District", "The Heights"], 0, { image: "images/trivia/un-9.svg" }), // 11/20: 5 questions per location
       q("un-10", "What's the name of UNC Charlotte's mascot?", ["Norm the Niner", "Rocky the Ram", "Sammy the Miner", "Goldie the Prospector"], 0, { image: "images/trivia/un-10.svg" }),
       // Before 11/12 (kept for reference):
       // q('un-1', "UNC Charlotte's athletic teams are called the:", ['49ers', 'Tar Heels', 'Wolfpack', 'Blue Devils'], 0),
