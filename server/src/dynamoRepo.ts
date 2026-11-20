@@ -221,6 +221,7 @@ export class DynamoRepo implements Repo {
     if (typeof i['ttl'] === 'number' && i['ttl'] < nowSeconds()) return undefined;
     return {
       runId: String(i['runId']),
+      ...(i['playerId'] ? { playerId: String(i['playerId']) } : {}),
       hotspotId: String(i['hotspotId']),
       locationId: String(i['locationId']),
       playerName: String(i['playerName']),

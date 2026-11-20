@@ -45,6 +45,8 @@ export interface Attempt {
 /** 11/20: a finished run that can be shared as a challenge link (stored for 60 days). */
 export interface Run {
   runId: string;
+  /** 11/20: who played it (private), so the link shows their current name if they rename after sharing. */
+  playerId?: string;
   hotspotId: string;
   locationId: string;
   playerName: string;
@@ -60,7 +62,8 @@ export interface Run {
 }
 
 /** What anyone can see about a shared run (no answer order). */
-export type RunSummary = Omit<Run, 'choiceOrders'>;
+export type RunSummary = Omit<Run, 'choiceOrders' | 'playerId'>;
+// was: export type RunSummary = Omit<Run, 'choiceOrders'>;
 
 export interface LocationTotal {
   locationId: string;

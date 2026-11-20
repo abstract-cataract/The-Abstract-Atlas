@@ -46,6 +46,11 @@
         ⏱ Timed trivia: {{ hotspot.triviaQuestions?.length ?? 0 }} questions, {{ secondsPerQuestion }} seconds each. Faster right answers score more.
       </p>
 
+      <!-- 11/20: they came from a friend's challenge link -->
+      <div class="rival-note" *ngIf="rival as r">
+        ⚔️ <strong>{{ r.run.playerName }}</strong> challenged you: beat <strong>{{ r.run.correctAnswers }}/{{ r.run.totalQuestions }}</strong> in {{ r.run.seconds }}s.
+      </div>
+
       <button id="start-challenge" *ngIf="!progress.isHotspotCompleted(hotspot.id)" (click)="showChallenge()">
         Start Challenge
       </button>

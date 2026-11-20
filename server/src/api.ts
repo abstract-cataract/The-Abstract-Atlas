@@ -210,7 +210,7 @@ export function createApi(deps: ApiDeps) {
     if (method === 'GET' && run) {
       const found = await repo.getRun(run[1]!);
       if (!found) throw new HttpError(404, 'CHALLENGE_NOT_FOUND', 'That challenge link has expired or does not exist.');
-      return reply(200, { run: runSummary(found), locationName: getLocation(found.locationId)?.name ?? '' });
+      return reply(200, { run: await runSummary(found), locationName: getLocation(found.locationId)?.name ?? '' });
     }
 
     if (method === 'POST' && path === '/account/claim') {
@@ -258,13 +258,17 @@ export function createApi(deps: ApiDeps) {
       attemptId: attempt.attemptId,
       hotspotId: hotspot.id,
       question: questionPayload(attempt, hotspot),
-      ...(rival ? { challenge: runSummary(rival) } : {}),
+      ...(rival ? { challenge: await runSummary(rival) } : {}),
     });
   }
 
-  /** 11/20: the public part of a run (no choice order). */
-  function runSummary(run: Run): RunSummary {
-    const { choiceOrders: _hidden, ...summary } = run;
+  /** 11/20: the public part of a run (no choice order, no player id), with the player's current name. */
+  async function runSummary(run: Run): Promise<RunSummary> {
+    const { choiceOrders: _hidden, playerId, ...summary } = run;
+    if (playerId) {
+      const profile = await repo.getProfile(playerId).catch(() => undefined);
+      if (profile?.playerName) summary.playerName = profile.playerName; // renamed after sharing
+    }
     return summary;
   }
 
@@ -373,6 +377,7 @@ export function createApi(deps: ApiDeps) {
     // 11/20: save this run so it can be sent as a challenge link, and compare with the friend's run if this was one.
     const run: Run = {
       runId: deps.newId(),
+      playerId: caller.playerId,
       hotspotId: hotspot.id,
       locationId: hotspot.locationId,
       playerName: profile.playerName,
@@ -394,8 +399,8 @@ export function createApi(deps: ApiDeps) {
     const rival = attempt.challengeRunId ? await repo.getRun(attempt.challengeRunId).catch(() => undefined) : undefined;
     const versus = rival
       ? {
-          you: runSummary(run),
-          them: runSummary(rival),
+          you: await runSummary(run),
+          them: await runSummary(rival),
           // Higher score wins; a tie goes to the faster time (same as the leaderboard spirit).
           outcome:
             run.score !== rival.score

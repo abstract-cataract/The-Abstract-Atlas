@@ -360,3 +360,14 @@ describe('challenge a friend', () => {
     expect(res.json.error.code).toBe('CHALLENGE_NOT_FOUND');
   });
 });
+
+describe('challenge names (11/20)', () => {
+  it("shows the player's current name on a link they shared before renaming", async () => {
+    const guest = await newGuest();
+    const mine = await playRun(guest, GUEST_HS);
+    await call('PATCH', '/me', { headers: guest, body: { playerName: 'Iverson' } });
+    const look = await call('GET', `/runs/${mine.result.runId}`);
+    expect(look.json.run.playerName).toBe('Iverson');
+    expect(look.json.run.playerId).toBeUndefined(); // stays private
+  });
+});

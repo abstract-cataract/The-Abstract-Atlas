@@ -521,3 +521,16 @@
 :host {
   overflow: clip;
 }
+
+/* 11/20: keep the "Tap a house" hint and Enable tilt above the sign up / log in pill (bottom-right, up to 2 rows on phones) */
+#tilt-button {
+  bottom: calc(88px + env(safe-area-inset-bottom, 0px)); /* was 24px */
+}
+#tilt-denied {
+  bottom: calc(150px + env(safe-area-inset-bottom, 0px)); /* was 80px */
+}
+@media (hover: none) and (pointer: coarse), (max-width: 720px) {
+  #hint {
+    bottom: calc(150px + env(safe-area-inset-bottom, 0px)); /* was 84px */
+  }
+}

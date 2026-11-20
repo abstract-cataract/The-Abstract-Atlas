@@ -281,3 +281,14 @@
   text-transform: uppercase;
   vertical-align: middle;
 }
+
+/* 11/20: "Iverson challenged you" note above Start Challenge */
+.rival-note {
+  margin: 10px 0;
+  padding: 10px 12px;
+  border: 2px dashed #c0392b;
+  border-radius: 8px;
+  background: #fff1ea;
+  color: #4a3320;
+  font-size: 14px;
+}

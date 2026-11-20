@@ -82,6 +82,13 @@
       <div class="share-title">{{ r.versus?.outcome === 'win' ? 'Your move, ' + r.versus?.them?.playerName : 'Can you beat me in ' + hotspot.name + '?' }}</div>
       <div class="share-squares">{{ squares(r.answers) }}</div>
       <div class="share-sub">{{ r.correctAnswers }}/{{ r.totalQuestions }}<span *ngIf="r.seconds !== undefined"> in {{ r.seconds }}s</span> · same questions, same clock</div>
+      <!-- 11/20: pick the name your friend sees ("Explorer-1234" otherwise) -->
+      <label class="share-name-label" for="share-name">Your name on this challenge</label>
+      <div class="share-name-row">
+        <input id="share-name" class="share-name" type="text" maxlength="20" [(ngModel)]="shareName" (keydown.enter)="saveShareName()" autocomplete="nickname" />
+        <button class="online-btn secondary" type="button" (click)="saveShareName()" [disabled]="savingName || shareName.trim() === api.playerName()">Save</button>
+      </div>
+      <p class="share-name-error" *ngIf="nameError">{{ nameError }}</p>
       <input class="share-link" readonly [value]="shareLink(r)" (focus)="$any($event.target).select()" aria-label="Challenge link" />
       <div class="share-actions">
         <button class="online-btn" (click)="share(r)">Share</button>

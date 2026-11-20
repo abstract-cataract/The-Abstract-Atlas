@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output } from '@angular/core';
 import { AnswerSplit, ChallengeResult, RunSummary, ServerQuestion } from '../../models/api.models';
 import { Hotspot } from '../../models/game.models';
@@ -20,7 +21,7 @@ const FEEDBACK_MS = 2500; // was 900: long enough to read a tailored line
 @Component({
   selector: 'app-trivia-online',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './trivia-online.component.html',
   styleUrls: ['../trivia-challenge/trivia-challenge.component.css', './trivia-online.component.css'],
 })
@@ -47,6 +48,10 @@ export class TriviaOnlineComponent implements OnChanges, OnDestroy {
   /** 11/20: the "Challenge a friend" panel on the results screen. */
   shareOpen = false;
   shareStatus = '';
+  /** 11/20: the name your friend sees on the challenge. */
+  shareName = '';
+  savingName = false;
+  nameError = '';
 
   private attemptId = '';
   private submitting = false;
@@ -175,10 +180,31 @@ export class TriviaOnlineComponent implements OnChanges, OnDestroy {
   openShare() {
     this.shareOpen = true;
     this.shareStatus = '';
+    this.shareName = this.api.playerName();
+    this.nameError = '';
+  }
+
+  /** 11/20: saves the player's name (guests too). The link always shows the current name, so this works after sharing as well. */
+  async saveShareName(): Promise<boolean> {
+    const next = this.shareName.trim();
+    if (!next || next === this.api.playerName()) return true;
+    this.savingName = true;
+    this.nameError = '';
+    try {
+      await this.api.rename(next);
+      this.shareStatus = 'Name saved.';
+      return true;
+    } catch (e) {
+      this.nameError = (e as Error).message || "That name can't be used. Try another.";
+      return false;
+    } finally {
+      this.savingName = false;
+    }
   }
 
   /** Phones: the system share sheet (Instagram, Messages...). Elsewhere: copy. */
   async share(r: ChallengeResult) {
+    if (!(await this.saveShareName())) return; // 11/20: fix the name first
     const text = this.shareText(r);
     const url = this.shareLink(r);
     const nav = navigator as Navigator & { share?: (d: ShareData) => Promise<void> };
@@ -195,6 +221,7 @@ export class TriviaOnlineComponent implements OnChanges, OnDestroy {
   }
 
   async copy(r: ChallengeResult) {
+    if (!(await this.saveShareName())) return; // 11/20
     try {
       await navigator.clipboard.writeText(`${this.shareText(r)}\n${this.shareLink(r)}`);
       this.shareStatus = 'Copied! Paste it in a DM or your story.';

@@ -9,7 +9,8 @@ import { ChallengeLinkService } from '../../services/challenge-link.service';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="cb" *ngIf="links.pending() as p" role="dialog" aria-label="Challenge from a friend">
+    <!-- 11/20: hidden once accepted (was: *ngIf="links.pending() as p") -->
+    <div class="cb" *ngIf="links.pending() as p" [hidden]="p.accepted" role="dialog" aria-label="Challenge from a friend">
       <ng-container *ngIf="!p.accepted">
         <div class="cb-kicker">You've been challenged</div>
         <p class="cb-line">

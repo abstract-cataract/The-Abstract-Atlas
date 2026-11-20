@@ -311,7 +311,7 @@ export class LocationSceneComponent implements OnInit, AfterViewInit, OnDestroy 
     if (!hotspot) return;
     void this.api.whenReady().then(() =>
       setTimeout(() => {
-        this.activeView = 'challenge';
+        this.activeView = 'guide'; // 11/20: land on the field guide with Start Challenge; was 'challenge'
         this.openHotspot(hotspot);
       }, 700),
     );

@@ -14,7 +14,8 @@
 //   RESULT#...    best score per location (badges and progress go with it, since they're earned per run)
 //   LOCTOTAL#...  leaderboard rows
 //   ATTEMPT#...   runs in progress
-// What it keeps: player profiles and names, accounts, challenge links, and the "what everyone said" answer counts.
+//   QSTATS#...    the "what everyone said" answer percentages (11/20: these reset too)
+// What it keeps: player profiles and names, accounts, and challenge links.
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { BatchWriteCommand, DynamoDBDocumentClient, ScanCommand } from '@aws-sdk/lib-dynamodb';
 
@@ -39,8 +40,9 @@ do {
   const out = await db.send(
     new ScanCommand({
       TableName: table,
-      FilterExpression: 'begins_with(PK, :p) AND (begins_with(SK, :a) OR begins_with(SK, :b) OR begins_with(SK, :c))',
-      ExpressionAttributeValues: { ':p': 'PLAYER#', ':a': PREFIXES[0], ':b': PREFIXES[1], ':c': PREFIXES[2] },
+      FilterExpression:
+        '(begins_with(PK, :p) AND (begins_with(SK, :a) OR begins_with(SK, :b) OR begins_with(SK, :c))) OR begins_with(PK, :q)',
+      ExpressionAttributeValues: { ':p': 'PLAYER#', ':a': PREFIXES[0], ':b': PREFIXES[1], ':c': PREFIXES[2], ':q': 'QSTATS#' },
       ProjectionExpression: 'PK, SK',
       ExclusiveStartKey: startKey,
     }),
@@ -50,6 +52,7 @@ do {
 } while (startKey);
 
 for (const p of PREFIXES) console.log(`${p.padEnd(10)} ${items.filter((i) => String(i.SK).startsWith(p)).length}`);
+console.log(`${'QSTATS#'.padEnd(10)} ${items.filter((i) => String(i.PK).startsWith('QSTATS#')).length}  (answer percentages)`);
 if (!really) {
   console.log('\nNothing deleted. Run again with --yes to reset every location.');
   process.exit(0);
@@ -61,4 +64,4 @@ for (let i = 0; i < items.length; i += 25) {
     }),
   );
 }
-console.log(`\nDeleted ${items.length} items. Every leaderboard and score is back to zero.`);
+console.log(`\nDeleted ${items.length} items. Every leaderboard, badge, score and answer percentage is back to zero.`);

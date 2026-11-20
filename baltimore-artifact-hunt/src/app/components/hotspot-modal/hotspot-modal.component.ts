@@ -7,6 +7,7 @@ import { CharacterCoverComponent } from '../character-cover/character-cover.comp
 import { ProgressService } from '../../services/progress.service';
 import { TriviaChallengeComponent } from '../trivia-challenge/trivia-challenge.component';
 import { TriviaOnlineComponent } from '../trivia-online/trivia-online.component';
+import { ChallengeLinkService } from '../../services/challenge-link.service';
 
 export type ModalView = 'guide' | 'story' | 'challenge' | 'characters';
 
@@ -28,7 +29,19 @@ export class HotspotModalComponent {
   /** Which character's comic cover is open (index into hotspot.characters), or null. */
   coverIndex: number | null = null;
 
-  constructor(public progress: ProgressService, public api: GameApiService, private gameData: GameDataService) {}
+  constructor(
+    public progress: ProgressService,
+    public api: GameApiService,
+    private gameData: GameDataService,
+    private challengeLinks: ChallengeLinkService, // 11/20
+  ) {}
+  // was: constructor(public progress: ProgressService, public api: GameApiService, private gameData: GameDataService) {}
+
+  /** 11/20: the friend's challenge this player accepted for this location, if any. */
+  get rival() {
+    const p = this.challengeLinks.pending();
+    return p?.accepted && p.run.hotspotId === this.hotspot?.id ? p : null;
+  }
 
   openCover(index: number) {
     if (this.hotspot.characters?.[index]?.comingSoon) return; // their cover isn't ready yet
