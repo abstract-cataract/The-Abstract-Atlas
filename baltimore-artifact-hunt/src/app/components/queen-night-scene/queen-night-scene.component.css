@@ -275,3 +275,19 @@
     display: none;
   }
 }
+
+/* 11/20: the houses now sit mid-screen, so the Trade & Tryon sign drops lower on its pole (and gets a bit smaller)
+   to stay clear of the University City house. Was: pole 52% tall, signs at bottom 50% / 45%. */
+.qn-pole {
+  height: 41%;
+}
+.qn-sign {
+  font-size: clamp(9px, 1.4vh, 13px);
+  padding: 0.4vh 1vh;
+}
+.qn-sign-trade {
+  bottom: 39%;
+}
+.qn-sign-tryon {
+  bottom: 35.5%;
+}
