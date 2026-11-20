@@ -361,16 +361,22 @@ export function createApi(deps: ApiDeps) {
 
     const results = await repo.getResults(caller.playerId);
     const existing = results.find((r) => r.hotspotId === hotspot.id);
-    const best = existing ? mergeResults(existing, fresh) : fresh;
-    await repo.putResult(caller.playerId, best, caller.kind === 'guest');
+    // 11/20: only your FIRST run counts for the leaderboard and badge. Replays (you already know the answers)
+    // and later challenge runs are still scored and still make share links, but don't change your record.
+    const firstRun = !existing;
+    const best = existing ?? fresh;
+    // was: const best = existing ? mergeResults(existing, fresh) : fresh;
+    if (firstRun) await repo.putResult(caller.playerId, best, caller.kind === 'guest');
     await repo.deleteAttempt(caller.playerId, hotspot.id);
 
     const updated = [...results.filter((r) => r.hotspotId !== hotspot.id), best];
-    await repo.putLocationTotal(
-      caller.playerId,
-      { locationId: hotspot.locationId, playerName: profile.playerName, score: locationScore(hotspot.locationId, updated) },
-      caller.kind === 'guest',
-    );
+    if (firstRun) {
+      await repo.putLocationTotal(
+        caller.playerId,
+        { locationId: hotspot.locationId, playerName: profile.playerName, score: locationScore(hotspot.locationId, updated) },
+        caller.kind === 'guest',
+      );
+    }
 
     const locationCompleted = isLocationCompleted(hotspot.locationId, updated);
 
@@ -420,9 +426,13 @@ export function createApi(deps: ApiDeps) {
       totalQuestions: total,
       score: attempt.score,
       bestScore: best.score,
-      isNewBest: !existing || attempt.score > existing.score,
-      badgeEarned: completed,
-      badge: completed ? hotspot.badge : null,
+      // 11/20: false on replays: this run didn't change the leaderboard or badges.
+      counted: firstRun,
+      isNewBest: firstRun,
+      // was: isNewBest: !existing || attempt.score > existing.score,
+      badgeEarned: firstRun && completed,
+      badge: firstRun && completed ? hotspot.badge : null,
+      // was: badgeEarned: completed, badge: completed ? hotspot.badge : null,
       locationId: hotspot.locationId,
       locationCompleted,
       // The "sign up to save your badges" screen for guests who finish a location.

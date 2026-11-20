@@ -95,6 +95,8 @@ export interface ChallengeResult {
   locationCompleted: boolean;
   /** Present when a guest finishes a location: drives the "sign up to save badges" screen. */
   signUpPrompt?: SignUpPrompt;
+  /** 11/20: false on a replay: only the first run counts for the leaderboard and badge. */
+  counted?: boolean;
   /** 11/20: id for this run's challenge link. */
   runId?: string;
   /** 11/20: seconds spent answering, and right/wrong per question (for the share card). */

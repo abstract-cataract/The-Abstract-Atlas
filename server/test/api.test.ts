@@ -371,3 +371,19 @@ describe('challenge names (11/20)', () => {
     expect(look.json.run.playerId).toBeUndefined(); // stays private
   });
 });
+
+describe('first run counts (11/20)', () => {
+  it("keeps the first run on the leaderboard; a better replay doesn't replace it", async () => {
+    await call('PATCH', '/me', { headers: user('u1'), body: { playerName: 'First' } });
+    const first = await playRun(user('u1'), GUEST_HS, { secondsPerQuestion: 10 });
+    expect(first.result.counted).toBe(true);
+    const replay = await playRun(user('u1'), GUEST_HS, { secondsPerQuestion: 1 });
+    expect(replay.result.score).toBeGreaterThan(first.result.score);
+    expect(replay.result.counted).toBe(false);
+    expect(replay.result.badgeEarned).toBe(false);
+    expect(replay.result.bestScore).toBe(first.result.score);
+    expect(replay.result.runId).toBeTruthy(); // still shareable
+    const board = await call('GET', `/leaderboard/${GUEST_LOC}`);
+    expect(board.json.entries.find((e: any) => e.playerName === 'First').score).toBe(first.result.score);
+  });
+});
