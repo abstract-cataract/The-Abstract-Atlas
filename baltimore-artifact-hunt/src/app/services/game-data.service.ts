@@ -49,7 +49,12 @@ export class GameDataService {
   /** All badges in the game (earned or not), for the home page's achievements shelf. Charlotte first, like the cities. */
   getAllBadges(): Badge[] {
     // Cities that are "coming soon" don't show their badges yet.
-    return CITIES.filter((c) => !c.comingSoon).flatMap((c) => this.getHotspotsForCity(c.id)).map((h) => h.badge);
+    // 11/20: coming-soon locations (Uptown, Inner Harbor) don't show their badges yet either.
+    return CITIES.filter((c) => !c.comingSoon)
+      .flatMap((c) => this.getLocationsForCity(c.id).filter((l) => !l.comingSoon))
+      .flatMap((l) => this.getHotspotsForLocation(l.id))
+      .map((h) => h.badge);
+    // was (11/17): return CITIES.filter((c) => !c.comingSoon).flatMap((c) => this.getHotspotsForCity(c.id)).map((h) => h.badge);
     // was: return CITIES.flatMap((c) => this.getHotspotsForCity(c.id)).map((h) => h.badge);
   }
 }

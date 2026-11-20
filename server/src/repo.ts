@@ -1,4 +1,4 @@
-import { Attempt, HotspotResult, LeaderboardRow, LocationTotal, Profile } from './types.js';
+import { Attempt, HotspotResult, LeaderboardRow, LocationTotal, Profile, Run } from './types.js';
 
 /** Storage interface. DynamoRepo is the real one; MemoryRepo (test/) backs the unit tests. */
 export interface Repo {
@@ -19,4 +19,12 @@ export interface Repo {
 
   /** Remove every item belonging to a player (used after a guest's progress is claimed). */
   deletePlayer(playerId: string): Promise<void>;
+
+  // 11/20: "what everyone said" — how many players picked each choice of a question.
+  /** Adds one answer (original choice index) and returns the new counts per choice. Pass null to just read. */
+  recordAnswer(questionId: string, choiceIndex: number | null, choiceCount: number): Promise<number[]>;
+
+  // 11/20: challenge links.
+  putRun(run: Run): Promise<void>;
+  getRun(runId: string): Promise<Run | undefined>;
 }

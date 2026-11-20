@@ -26,10 +26,18 @@
       [class.incorrect]="answerState === 'incorrect' && selectedChoice === i"
       [disabled]="answerState !== 'unanswered'"
       (click)="select(i)"
+      [class.with-split]="split && answerState !== 'unanswered'"
     >
-      {{ choice }}
+      <!-- 11/20: "what everyone said": a bar for how many players picked this choice -->
+      <span class="split-bar" *ngIf="split && answerState !== 'unanswered'" [style.width.%]="split.percents[i]"></span>
+      <span class="choice-text">{{ choice }}<span class="you-tag" *ngIf="selectedChoice === i && answerState !== 'unanswered'">You</span></span>
+      <span class="split-pct" *ngIf="split && answerState !== 'unanswered'">{{ split.percents[i] }}%</span>
+      <!-- was: {{ choice }} -->
     </button>
   </div>
+  <p class="split-note" *ngIf="split && answerState !== 'unanswered' && split.answered > 1">
+    {{ split.answered }} players have answered this one.
+  </p>
 
   <p class="trivia-feedback" *ngIf="answerState === 'timeout'">Time's up!</p>
   <p class="trivia-feedback" *ngIf="answerState === 'correct'">Correct! 🎉</p>
@@ -39,6 +47,24 @@
 </div>
 
 <div class="trivia-results" *ngIf="phase === 'done' && result as r">
+  <!-- 11/20: head to head, when this run came from a friend's challenge link -->
+  <div class="versus" *ngIf="r.versus as v">
+    <div class="versus-outcome" [ngClass]="v.outcome">
+      {{ v.outcome === 'win' ? 'You beat ' + v.them.playerName + '!' : v.outcome === 'lose' ? v.them.playerName + ' wins this one.' : "It's a tie!" }}
+    </div>
+    <div class="versus-scores">
+      <div><span class="versus-who">You</span><span class="versus-n">{{ v.you.correctAnswers }}/{{ v.you.totalQuestions }}</span><span class="versus-s">{{ v.you.seconds }}s · {{ v.you.score }} pts</span></div>
+      <span class="versus-vs">VS</span>
+      <div><span class="versus-who">{{ v.them.playerName }}</span><span class="versus-n">{{ v.them.correctAnswers }}/{{ v.them.totalQuestions }}</span><span class="versus-s">{{ v.them.seconds }}s · {{ v.them.score }} pts</span></div>
+    </div>
+    <div class="versus-rows">
+      <div class="versus-row versus-head"><span>Question</span><span>You</span><span>Them</span></div>
+      <div class="versus-row" *ngFor="let a of v.you.answers; let i = index">
+        <span>{{ i + 1 }}</span><span>{{ a ? '✅' : '❌' }}</span><span>{{ v.them.answers[i] ? '✅' : '❌' }}</span>
+      </div>
+    </div>
+  </div>
+
   <div class="trivia-badge-icon">{{ hotspot.badge.icon }}</div>
   <h3>{{ r.correctAnswers }} / {{ r.totalQuestions }} correct</h3>
   <p class="trivia-score">Score: {{ r.score }} pts</p>
@@ -49,6 +75,22 @@
   </p>
   <p class="trivia-badge-earned" *ngIf="!r.badgeEarned">No badge this time — give it another shot!</p>
 
+  <!-- 11/20: challenge a friend -->
+  <div class="share-box" *ngIf="r.runId">
+    <button class="online-btn" *ngIf="!shareOpen" (click)="openShare()">{{ r.versus ? 'Send it back' : 'Challenge a friend' }}</button>
+    <div class="share-card" *ngIf="shareOpen">
+      <div class="share-title">{{ r.versus?.outcome === 'win' ? 'Your move, ' + r.versus?.them?.playerName : 'Can you beat me in ' + hotspot.name + '?' }}</div>
+      <div class="share-squares">{{ squares(r.answers) }}</div>
+      <div class="share-sub">{{ r.correctAnswers }}/{{ r.totalQuestions }}<span *ngIf="r.seconds !== undefined"> in {{ r.seconds }}s</span> · same questions, same clock</div>
+      <input class="share-link" readonly [value]="shareLink(r)" (focus)="$any($event.target).select()" aria-label="Challenge link" />
+      <div class="share-actions">
+        <button class="online-btn" (click)="share(r)">Share</button>
+        <button class="online-btn secondary" (click)="copy(r)">Copy link</button>
+      </div>
+      <p class="share-status" *ngIf="shareStatus">{{ shareStatus }}</p>
+    </div>
+  </div>
+
   <!-- Guests who finish a location: save badges + show what an account unlocks. -->
   <ng-container *ngIf="!api.signedIn() && r.signUpPrompt as prompt">
     <div class="signup-prompt">
@@ -57,8 +99,8 @@
       <div class="prompt-badges">
         <span class="prompt-pill" *ngFor="let b of prompt.badges">{{ b.icon }} {{ b.name }}</span>
       </div>
-      <p class="prompt-sub">You unlock these when you sign up:</p>
-      <ul class="unlock-list">
+      <p class="prompt-sub" *ngIf="prompt.unlockedLocations.length">You unlock these when you sign up:</p>
+      <ul class="unlock-list" *ngIf="prompt.unlockedLocations.length">
         <li *ngFor="let loc of prompt.unlockedLocations">
           <strong>{{ loc.name }}</strong><span> — {{ loc.tagline }}</span>
         </li>

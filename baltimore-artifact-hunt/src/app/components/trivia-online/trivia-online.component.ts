@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output } from '@angular/core';
-import { ChallengeResult, ServerQuestion } from '../../models/api.models';
+import { AnswerSplit, ChallengeResult, RunSummary, ServerQuestion } from '../../models/api.models';
 import { Hotspot } from '../../models/game.models';
 import { ApiError, GameApiService } from '../../services/game-api.service';
 import { AuthUiService } from '../../services/auth-ui.service';
+import { ChallengeLinkService } from '../../services/challenge-link.service';
 
 type AnswerState = 'unanswered' | 'correct' | 'incorrect' | 'timeout';
 type Phase = 'loading' | 'question' | 'done' | 'error';
@@ -39,6 +40,13 @@ export class TriviaOnlineComponent implements OnChanges, OnDestroy {
   result: ChallengeResult | null = null;
   errorMessage = '';
   errorNeedsSignUp = false;
+  /** 11/20: how everyone answered the current question (shown as bars during feedback). */
+  split: AnswerSplit | null = null;
+  /** 11/20: the friend whose challenge link this run came from. */
+  rival: RunSummary | null = null;
+  /** 11/20: the "Challenge a friend" panel on the results screen. */
+  shareOpen = false;
+  shareStatus = '';
 
   private attemptId = '';
   private submitting = false;
@@ -46,7 +54,7 @@ export class TriviaOnlineComponent implements OnChanges, OnDestroy {
   private timerHandle: ReturnType<typeof setInterval> | null = null;
   private advanceHandle: ReturnType<typeof setTimeout> | null = null;
 
-  constructor(public api: GameApiService, private authUi: AuthUiService) {}
+  constructor(public api: GameApiService, private authUi: AuthUiService, private challengeLinks: ChallengeLinkService) {}
 
   ngOnChanges() {
     void this.begin();
@@ -65,12 +73,21 @@ export class TriviaOnlineComponent implements OnChanges, OnDestroy {
     this.errorMessage = '';
     this.errorNeedsSignUp = false;
     this.runningScore = 0;
+    this.rival = null;
+    this.shareOpen = false;
+    this.shareStatus = '';
+    // 11/20: a friend's challenge link for this location plays their exact run.
+    const challengeRunId = this.challengeLinks.runIdFor(this.hotspot.id);
     try {
-      const res = await this.api.startChallenge(this.hotspot.id);
+      const res = await this.api.startChallenge(this.hotspot.id, challengeRunId);
+      // was: const res = await this.api.startChallenge(this.hotspot.id);
       if (run !== this.runId) return;
+      if (challengeRunId) this.challengeLinks.done();
+      this.rival = res.challenge ?? null;
       this.attemptId = res.attemptId;
       this.showQuestion(res.question);
     } catch (e) {
+      if (challengeRunId) this.challengeLinks.done(); // a bad or outdated link: "Try again" plays a normal run
       if (run === this.runId) this.fail(e);
     }
   }
@@ -97,6 +114,7 @@ export class TriviaOnlineComponent implements OnChanges, OnDestroy {
     this.selectedChoice = null;
     this.correctChoice = null;
     this.responseLine = null;
+    this.split = null;
     this.submitting = false;
     this.secondsLeft = q.timeLimitSeconds;
     this.clearTimer();
@@ -118,6 +136,7 @@ export class TriviaOnlineComponent implements OnChanges, OnDestroy {
       this.correctChoice = res.correctIndex;
       this.answerState = choiceIndex === null || res.timedOut ? 'timeout' : res.correct ? 'correct' : 'incorrect';
       this.responseLine = res.response ?? null;
+      this.split = res.split ?? null; // 11/20
       this.runningScore += res.pointsAwarded;
       this.advanceHandle = setTimeout(() => {
         if (res.done && res.result) {
@@ -133,6 +152,57 @@ export class TriviaOnlineComponent implements OnChanges, OnDestroy {
     }
   }
 
+  // ------------------------------------------------ 11/20: challenge a friend
+  /** Green/red squares for the share text, one per question. */
+  squares(answers: boolean[] | undefined): string {
+    return (answers ?? []).map((a) => (a ? '🟩' : '🟥')).join('');
+  }
+
+  shareText(r: ChallengeResult): string {
+    const where = this.hotspot.name;
+    const time = r.seconds !== undefined ? ` in ${r.seconds}s` : '';
+    const head =
+      r.versus?.outcome === 'win'
+        ? `I beat ${r.versus.them.playerName} in ${where}: ${r.correctAnswers}/${r.totalQuestions}${time}. Your move.`
+        : `I got ${r.correctAnswers}/${r.totalQuestions} in ${where}${time} on The Abstract Atlas. Can you beat me?`;
+    return `${head}\n${this.squares(r.answers)}`;
+  }
+
+  shareLink(r: ChallengeResult): string {
+    return r.runId ? ChallengeLinkService.linkFor(r.runId) : '';
+  }
+
+  openShare() {
+    this.shareOpen = true;
+    this.shareStatus = '';
+  }
+
+  /** Phones: the system share sheet (Instagram, Messages...). Elsewhere: copy. */
+  async share(r: ChallengeResult) {
+    const text = this.shareText(r);
+    const url = this.shareLink(r);
+    const nav = navigator as Navigator & { share?: (d: ShareData) => Promise<void> };
+    if (nav.share) {
+      try {
+        await nav.share({ title: 'The Abstract Atlas', text, url });
+        this.shareStatus = 'Sent!';
+        return;
+      } catch (e) {
+        if ((e as Error)?.name === 'AbortError') return; // they closed the share sheet
+      }
+    }
+    await this.copy(r);
+  }
+
+  async copy(r: ChallengeResult) {
+    try {
+      await navigator.clipboard.writeText(`${this.shareText(r)}\n${this.shareLink(r)}`);
+      this.shareStatus = 'Copied! Paste it in a DM or your story.';
+    } catch {
+      this.shareStatus = 'Copy the link below.';
+    }
+  }
+
   private fail(e: unknown) {
     this.clearTimers();
     this.phase = 'error';
@@ -144,6 +214,7 @@ export class TriviaOnlineComponent implements OnChanges, OnDestroy {
         this.authUi.show('login');
       }
       if (e.code === 'ATTEMPT_NOT_FOUND') this.errorMessage = 'That run ended. Start the challenge again.';
+      if (e.code === 'CHALLENGE_NOT_FOUND' || e.code === 'CHALLENGE_OUTDATED') this.errorMessage = e.message + ' Tap "Try again" for a fresh run.'; // 11/20
     } else {
       this.errorMessage = 'Something went wrong. Please try again.';
     }

@@ -386,7 +386,8 @@
 }
 
 /* 11/19: University's sticker is green (the rest stay red). Add a line like this for any other location. */
-.cc-sticker[data-location="University"] {
+.cc-sticker[data-location="University"],
+.cc-sticker[data-location="University City"] { /* 11/20: renamed */
   background: #00a84f;
 }
 

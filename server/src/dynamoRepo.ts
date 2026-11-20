@@ -4,6 +4,8 @@
 //   PK = PLAYER#<id>   SK = RESULT#<hotspotId>     -> HotspotResult (best result)
 //   PK = PLAYER#<id>   SK = ATTEMPT#<hotspotId>    -> Attempt (in progress, expires after 1h)
 //   PK = PLAYER#<id>   SK = LOCTOTAL#<locationId>  -> LocationTotal
+//   PK = QSTATS#<questionId>  SK = STATS            -> c0, c1, c2... answer counts per original choice (11/20)
+//   PK = RUN#<runId>          SK = RUN              -> Run, a shared challenge (expires after 60 days) (11/20)
 //                      + GSI1PK = LB#<locationId>, GSI1SK = <padded score>#<id>   (registered players only)
 //
 // Leaderboard = query GSI1 for LB#<locationId>, newest-highest first. Guest items carry a
@@ -16,13 +18,15 @@ import {
   GetCommand,
   PutCommand,
   QueryCommand,
+  UpdateCommand,
 } from '@aws-sdk/lib-dynamodb';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { Repo } from './repo.js';
-import { Attempt, HotspotResult, LeaderboardRow, LocationTotal, Profile } from './types.js';
+import { Attempt, HotspotResult, LeaderboardRow, LocationTotal, Profile, Run } from './types.js';
 
 const GUEST_TTL_SECONDS = 90 * 24 * 60 * 60;
 const ATTEMPT_TTL_SECONDS = 60 * 60;
+const RUN_TTL_SECONDS = 60 * 24 * 60 * 60; // challenge links last 60 days
 
 const pk = (playerId: string) => `PLAYER#${playerId}`;
 const nowSeconds = () => Math.floor(Date.now() / 1000);
@@ -176,6 +180,58 @@ export class DynamoRepo implements Repo {
         }),
       );
     }
+  }
+
+  // ------------------------------------------------- 11/20: answer counts
+  async recordAnswer(questionId: string, choiceIndex: number | null, choiceCount: number): Promise<number[]> {
+    const Key = { PK: `QSTATS#${questionId}`, SK: 'STATS' };
+    let item: Record<string, unknown> | undefined;
+    if (choiceIndex === null) {
+      item = (await this.db.send(new GetCommand({ TableName: this.tableName, Key }))).Item;
+    } else {
+      const out = await this.db.send(
+        new UpdateCommand({
+          TableName: this.tableName,
+          Key,
+          UpdateExpression: 'ADD #c :one',
+          ExpressionAttributeNames: { '#c': `c${choiceIndex}` },
+          ExpressionAttributeValues: { ':one': 1 },
+          ReturnValues: 'ALL_NEW',
+        }),
+      );
+      item = out.Attributes;
+    }
+    return Array.from({ length: choiceCount }, (_, i) => Number(item?.[`c${i}`] ?? 0));
+  }
+
+  // ------------------------------------------------- 11/20: challenge links
+  async putRun(run: Run): Promise<void> {
+    await this.db.send(
+      new PutCommand({
+        TableName: this.tableName,
+        Item: { ...run, ttl: nowSeconds() + RUN_TTL_SECONDS, PK: `RUN#${run.runId}`, SK: 'RUN' },
+      }),
+    );
+  }
+
+  async getRun(runId: string): Promise<Run | undefined> {
+    const out = await this.db.send(new GetCommand({ TableName: this.tableName, Key: { PK: `RUN#${runId}`, SK: 'RUN' } }));
+    const i = out.Item;
+    if (!i) return undefined;
+    if (typeof i['ttl'] === 'number' && i['ttl'] < nowSeconds()) return undefined;
+    return {
+      runId: String(i['runId']),
+      hotspotId: String(i['hotspotId']),
+      locationId: String(i['locationId']),
+      playerName: String(i['playerName']),
+      correctAnswers: Number(i['correctAnswers']),
+      totalQuestions: Number(i['totalQuestions']),
+      score: Number(i['score']),
+      seconds: Number(i['seconds']),
+      answers: (i['answers'] as boolean[]) ?? [],
+      choiceOrders: (i['choiceOrders'] as number[][]) ?? [],
+      createdAt: Number(i['createdAt']),
+    };
   }
 
   /** All of a player's items whose sort key starts with `prefix` ('' = everything). */

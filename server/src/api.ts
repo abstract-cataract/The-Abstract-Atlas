@@ -6,8 +6,10 @@
 //   PATCH /me                                 { playerName }
 //   GET   /locations                          locations + whether the caller can play them
 //   POST  /challenges/:hotspotId/start        begin a run, returns question 1
+//                                             (11/20: optional { challengeRunId } plays a friend's exact run)
 //   POST  /challenges/:hotspotId/answer       { attemptId, choiceIndex|null } -> result + next question
 //   GET   /leaderboard/:locationId            top 10 registered players
+//   GET   /runs/:runId                        11/20: a shared run (challenge link), no login needed
 //   POST  /account/claim                      move a guest's progress into the signed-in account
 //
 // Auth: signed-in users send `Authorization: Bearer <Cognito ID token>`;
@@ -20,7 +22,7 @@ import { HttpError } from './httpError.js';
 import { signGuestToken, verifyGuestToken } from './guestToken.js';
 import { Repo } from './repo.js';
 import { FEEDBACK_MS, isCompleted, scoreAnswer, shuffledOrder } from './scoring.js';
-import { Attempt, Caller, HotspotResult, Profile } from './types.js';
+import { Attempt, Caller, HotspotResult, Profile, Run, RunSummary } from './types.js';
 import { LIMITS, assertSaneRequest, validatePlayerName } from './validation.js';
 
 export interface ApiDeps {
@@ -192,7 +194,8 @@ export function createApi(deps: ApiDeps) {
           unlockedBySignUp: locationsUnlockedBySignUp(),
         });
       }
-      return challenge[2] === 'start' ? startChallenge(c, hotspot) : answerChallenge(c, hotspot, parseBody(event));
+      return challenge[2] === 'start' ? startChallenge(c, hotspot, parseBody(event)) : answerChallenge(c, hotspot, parseBody(event));
+      // was: return challenge[2] === 'start' ? startChallenge(c, hotspot) : answerChallenge(c, hotspot, parseBody(event));
     }
 
     const board = /^\/leaderboard\/([\w-]+)$/.exec(path);
@@ -200,6 +203,14 @@ export function createApi(deps: ApiDeps) {
       const location = getLocation(board[1]!);
       if (!location) throw new HttpError(404, 'LOCATION_NOT_FOUND', 'No such location.');
       return reply(200, { locationId: location.id, entries: await repo.getLeaderboard(location.id, 10) });
+    }
+
+    // 11/20: challenge links. Anyone with the link can see who they're up against.
+    const run = /^\/runs\/([\w-]{1,64})$/.exec(path);
+    if (method === 'GET' && run) {
+      const found = await repo.getRun(run[1]!);
+      if (!found) throw new HttpError(404, 'CHALLENGE_NOT_FOUND', 'That challenge link has expired or does not exist.');
+      return reply(200, { run: runSummary(found), locationName: getLocation(found.locationId)?.name ?? '' });
     }
 
     if (method === 'POST' && path === '/account/claim') {
@@ -211,19 +222,63 @@ export function createApi(deps: ApiDeps) {
   }
 
   // -------------------------------------------------------- challenge flow
-  async function startChallenge(caller: Caller, hotspot: Hotspot) {
+  async function startChallenge(caller: Caller, hotspot: Hotspot, body: Record<string, unknown> = {}) {
     await ensureProfile(caller);
+    // 11/20: playing a friend's challenge link = the exact same run (same choice order).
+    let rival: Run | undefined;
+    const challengeRunId = body['challengeRunId'];
+    if (challengeRunId !== undefined && challengeRunId !== null) {
+      if (typeof challengeRunId !== 'string' || !/^[\w-]{1,64}$/.test(challengeRunId)) {
+        throw new HttpError(400, 'BAD_REQUEST', 'challengeRunId is invalid.');
+      }
+      rival = await repo.getRun(challengeRunId);
+      if (!rival || rival.hotspotId !== hotspot.id) {
+        throw new HttpError(404, 'CHALLENGE_NOT_FOUND', 'That challenge link has expired or does not exist.');
+      }
+      // The questions changed since the link was made: it can't be the same run any more.
+      const sameShape =
+        rival.choiceOrders.length === hotspot.questions.length &&
+        rival.choiceOrders.every((o, i) => o.length === hotspot.questions[i]!.choices.length);
+      if (!sameShape) throw new HttpError(409, 'CHALLENGE_OUTDATED', 'The questions changed since this challenge was sent. Play a fresh run instead.');
+    }
     const attempt: Attempt = {
       attemptId: deps.newId(),
       hotspotId: hotspot.id,
-      choiceOrders: hotspot.questions.map((q) => shuffledOrder(q.choices.length, deps.rand)),
+      choiceOrders: rival ? rival.choiceOrders.map((o) => [...o]) : hotspot.questions.map((q) => shuffledOrder(q.choices.length, deps.rand)),
       questionIndex: 0,
       servedAt: deps.now(),
       correct: 0,
       score: 0,
+      answers: [],
+      elapsedMs: 0,
+      ...(rival ? { challengeRunId: rival.runId } : {}),
     };
     await repo.putAttempt(caller.playerId, attempt);
-    return reply(200, { attemptId: attempt.attemptId, hotspotId: hotspot.id, question: questionPayload(attempt, hotspot) });
+    return reply(200, {
+      attemptId: attempt.attemptId,
+      hotspotId: hotspot.id,
+      question: questionPayload(attempt, hotspot),
+      ...(rival ? { challenge: runSummary(rival) } : {}),
+    });
+  }
+
+  /** 11/20: the public part of a run (no choice order). */
+  function runSummary(run: Run): RunSummary {
+    const { choiceOrders: _hidden, ...summary } = run;
+    return summary;
+  }
+
+  /** 11/20: "what everyone said": percent of players who picked each choice, in the order shown. Never breaks a run. */
+  async function answerSplit(questionId: string, chosenOriginal: number | null, order: number[]) {
+    try {
+      const counts = await repo.recordAnswer(questionId, chosenOriginal, order.length);
+      const answered = counts.reduce((a, b) => a + b, 0);
+      const percents = order.map((orig) => (answered ? Math.round((100 * (counts[orig] ?? 0)) / answered) : 0));
+      return { answered, percents };
+    } catch (err) {
+      console.error('answer stats failed', err);
+      return undefined;
+    }
   }
 
   async function answerChallenge(caller: Caller, hotspot: Hotspot, body: Record<string, unknown>) {
@@ -257,6 +312,9 @@ export function createApi(deps: ApiDeps) {
     });
     attempt.correct += outcome.correct ? 1 : 0;
     attempt.score += outcome.points;
+    // 11/20: remember right/wrong and time for the challenge head-to-head.
+    attempt.answers = [...(attempt.answers ?? []), outcome.correct];
+    attempt.elapsedMs = (attempt.elapsedMs ?? 0) + Math.min(Math.max(0, deps.now() - attempt.servedAt), question.timeLimitSeconds * 1000);
     // The tailored line, if this question has one: a line for the picked choice wins, then right/wrong lines.
     const perChoice = chosenOriginal !== null ? question.choiceResponses?.[chosenOriginal] ?? undefined : undefined;
     const response =
@@ -268,6 +326,8 @@ export function createApi(deps: ApiDeps) {
       pointsAwarded: outcome.points,
       secondsLeft: outcome.secondsLeft,
       response,
+      // 11/20: how everyone else answered this question (includes this answer).
+      split: await answerSplit(question.id, chosenOriginal, order),
     };
 
     if (attempt.questionIndex < hotspot.questions.length - 1) {
@@ -309,7 +369,46 @@ export function createApi(deps: ApiDeps) {
     );
 
     const locationCompleted = isLocationCompleted(hotspot.locationId, updated);
+
+    // 11/20: save this run so it can be sent as a challenge link, and compare with the friend's run if this was one.
+    const run: Run = {
+      runId: deps.newId(),
+      hotspotId: hotspot.id,
+      locationId: hotspot.locationId,
+      playerName: profile.playerName,
+      correctAnswers: attempt.correct,
+      totalQuestions: total,
+      score: attempt.score,
+      seconds: Math.round((attempt.elapsedMs ?? 0) / 1000),
+      answers: attempt.answers ?? [],
+      choiceOrders: attempt.choiceOrders,
+      createdAt: deps.now(),
+    };
+    let runId: string | undefined;
+    try {
+      await repo.putRun(run);
+      runId = run.runId;
+    } catch (err) {
+      console.error('saving run failed', err); // the result still counts; only the share link is missing
+    }
+    const rival = attempt.challengeRunId ? await repo.getRun(attempt.challengeRunId).catch(() => undefined) : undefined;
+    const versus = rival
+      ? {
+          you: runSummary(run),
+          them: runSummary(rival),
+          // Higher score wins; a tie goes to the faster time (same as the leaderboard spirit).
+          outcome:
+            run.score !== rival.score
+              ? run.score > rival.score ? 'win' : 'lose'
+              : run.seconds !== rival.seconds ? (run.seconds < rival.seconds ? 'win' : 'lose') : 'tie',
+        }
+      : undefined;
+
     return {
+      runId,
+      seconds: run.seconds, // 11/20: for the share card
+      answers: run.answers, // 11/20: right/wrong per question, for the share card
+      ...(versus ? { versus } : {}),
       hotspotId: hotspot.id,
       completed,
       correctAnswers: attempt.correct,

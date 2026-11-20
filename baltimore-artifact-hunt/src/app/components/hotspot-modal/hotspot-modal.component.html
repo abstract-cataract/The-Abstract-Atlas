@@ -75,7 +75,7 @@
         <img *ngIf="c.photo; else noPhoto" class="character-photo" [src]="c.photo" [alt]="'Photo of ' + c.name" loading="lazy" />
         <ng-template #noPhoto><div class="character-photo character-photo-empty" aria-hidden="true">👤</div></ng-template>
         <div class="character-text">
-          <h3>{{ c.name }} <span class="soon-tag" *ngIf="c.comingSoon">Coming soon</span></h3>
+          <h3>{{ c.name }} <span class="soon-tag" *ngIf="c.comingSoon && c.name !== 'Coming soon'">Coming soon</span></h3>
           <p>&ldquo;{{ c.story }}&rdquo;</p><!-- 11/19: title line in quotes; was: <p>{{ c.story }}</p> -->
         </div>
       </article>

@@ -2,13 +2,15 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AccountBarComponent } from './components/account-bar/account-bar.component';
 import { AuthModalComponent } from './components/auth-modal/auth-modal.component';
+import { ChallengeBannerComponent } from './components/challenge-banner/challenge-banner.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, AccountBarComponent, AuthModalComponent],
+  imports: [RouterOutlet, AccountBarComponent, AuthModalComponent, ChallengeBannerComponent], // 11/20: + ChallengeBannerComponent
   template: `<router-outlet></router-outlet>
     <app-account-bar></app-account-bar>
-    <app-auth-modal></app-auth-modal>`,
+    <app-auth-modal></app-auth-modal>
+    <app-challenge-banner></app-challenge-banner>`,
 })
 export class AppComponent {}

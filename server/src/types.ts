@@ -34,7 +34,33 @@ export interface Attempt {
   servedAt: number;
   correct: number;
   score: number;
+  /** 11/20: right/wrong for each question answered so far (for the challenge head-to-head). */
+  answers?: boolean[];
+  /** 11/20: total time spent answering, in ms (each question capped at its time limit). */
+  elapsedMs?: number;
+  /** 11/20: set when this run was started from a friend's challenge link. */
+  challengeRunId?: string;
 }
+
+/** 11/20: a finished run that can be shared as a challenge link (stored for 60 days). */
+export interface Run {
+  runId: string;
+  hotspotId: string;
+  locationId: string;
+  playerName: string;
+  correctAnswers: number;
+  totalQuestions: number;
+  score: number;
+  seconds: number;
+  /** Right/wrong per question, in question order. */
+  answers: boolean[];
+  /** The choice order each question was shown in, so a friend gets the exact same run. */
+  choiceOrders: number[][];
+  createdAt: number;
+}
+
+/** What anyone can see about a shared run (no answer order). */
+export type RunSummary = Omit<Run, 'choiceOrders'>;
 
 export interface LocationTotal {
   locationId: string;

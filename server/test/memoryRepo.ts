@@ -1,5 +1,5 @@
 import { Repo } from '../src/repo.js';
-import { Attempt, HotspotResult, LeaderboardRow, LocationTotal, Profile } from '../src/types.js';
+import { Attempt, HotspotResult, LeaderboardRow, LocationTotal, Profile, Run } from '../src/types.js';
 
 /** In-memory Repo for tests. Mirrors DynamoRepo's behavior, including "guests never reach the leaderboard". */
 export class MemoryRepo implements Repo {
@@ -7,6 +7,22 @@ export class MemoryRepo implements Repo {
   results = new Map<string, Map<string, HotspotResult>>();
   attempts = new Map<string, Attempt>();
   totals = new Map<string, { total: LocationTotal; isGuest: boolean }>();
+  answerCounts = new Map<string, number[]>();
+  runs = new Map<string, Run>();
+
+  async recordAnswer(questionId: string, choiceIndex: number | null, choiceCount: number) {
+    const counts = this.answerCounts.get(questionId) ?? new Array(choiceCount).fill(0);
+    if (choiceIndex !== null) counts[choiceIndex] = (counts[choiceIndex] ?? 0) + 1;
+    this.answerCounts.set(questionId, counts);
+    return [...counts];
+  }
+  async putRun(run: Run) {
+    this.runs.set(run.runId, structuredClone(run));
+  }
+  async getRun(runId: string) {
+    const r = this.runs.get(runId);
+    return r ? structuredClone(r) : undefined;
+  }
 
   async getProfile(id: string) {
     return this.profiles.get(id);

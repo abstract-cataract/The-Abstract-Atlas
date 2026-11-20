@@ -38,6 +38,7 @@ import { LeaderboardComponent } from '../leaderboard/leaderboard.component';
 import { LeaderboardOnlineComponent } from '../leaderboard-online/leaderboard-online.component';
 import { ProgressBarComponent } from '../progress-bar/progress-bar.component';
 import { QueenNightSceneComponent } from '../queen-night-scene/queen-night-scene.component';
+import { ChallengeLinkService } from '../../services/challenge-link.service';
 
 @Component({
   selector: 'app-location-scene',
@@ -84,6 +85,7 @@ export class LocationSceneComponent implements OnInit, AfterViewInit, OnDestroy 
     public progress: ProgressService,
     public api: GameApiService,
     private authUi: AuthUiService,
+    private challengeLinks: ChallengeLinkService, // 11/20
   ) {}
 
   ngOnInit() {
@@ -137,6 +139,7 @@ export class LocationSceneComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   ngAfterViewInit() {
+    this.openAcceptedChallenge(); // 11/20
     if (!this.sceneEl) return;
     this.startParallax();
   }
@@ -298,6 +301,20 @@ export class LocationSceneComponent implements OnInit, AfterViewInit, OnDestroy 
       this.activeHotspot = hotspot;
       this.modalActive = true;
     }
+  }
+
+  /** 11/20: arrived here by accepting a friend's challenge link: open that location's trivia right away. */
+  private openAcceptedChallenge() {
+    const p = this.challengeLinks.pending();
+    if (!p?.accepted) return;
+    const hotspot = this.hotspots.find((h) => h.id === p.run.hotspotId);
+    if (!hotspot) return;
+    void this.api.whenReady().then(() =>
+      setTimeout(() => {
+        this.activeView = 'challenge';
+        this.openHotspot(hotspot);
+      }, 700),
+    );
   }
 
   toggleLeaderboard() {

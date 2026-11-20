@@ -77,16 +77,16 @@ describe('guest -> account claim against the real DynamoRepo', () => {
       return { status: res.statusCode, json: JSON.parse(res.body) as any };
     };
 
-    // Guest plays Uptown (the guest location) perfectly.
+    // Guest plays Ridgely's (a guest location) perfectly.
     const guest = { 'x-guest-token': (await call('POST', '/guest')).json.guestToken as string };
-    const hotspot = getHotspot('uptown-beacon')!;
-    const start = await call('POST', '/challenges/uptown-beacon/start', guest);
+    const hotspot = getHotspot('ridgelys-beacon')!;
+    const start = await call('POST', '/challenges/ridgelys-beacon/start', guest);
     let question = start.json.question;
     for (let i = 0; i < hotspot.questions.length; i++) {
       const original = hotspot.questions.find((q) => q.id === question.id)!;
       const choiceIndex = question.choices.indexOf(original.choices[original.correctIndex]);
       clock += (i > 0 ? FEEDBACK_MS : 0) + 2000; // feedback pause, then answer after 2s
-      const res = await call('POST', '/challenges/uptown-beacon/answer', guest, { attemptId: start.json.attemptId, choiceIndex });
+      const res = await call('POST', '/challenges/ridgelys-beacon/answer', guest, { attemptId: start.json.attemptId, choiceIndex });
       question = res.json.next;
     }
 
@@ -95,15 +95,15 @@ describe('guest -> account claim against the real DynamoRepo', () => {
     const claim = await call('POST', '/account/claim', { ...user, ...guest });
     expect(claim.status).toBe(200);
     expect(claim.json.claimed).toBe(1);
-    expect(claim.json.badges.map((b: any) => b.id)).toEqual(['queen-city-climber']);
+    expect(claim.json.badges.map((b: any) => b.id)).toEqual(['delight-seeker']);
 
     // It sticks: a fresh request as the account still has the badge and score.
     const me = await call('GET', '/me', user);
     expect(me.json.results).toHaveLength(1);
-    expect(me.json.results[0]).toMatchObject({ hotspotId: 'uptown-beacon', completed: true, badgeEarned: true, score: hotspot.questions.length * (100 + 10 * (hotspot.questions[0]!.timeLimitSeconds - 2)) });
-    expect(doc.items.get(doc.key('PLAYER#user-1', 'RESULT#uptown-beacon'))?.['ttl']).toBeUndefined();
+    expect(me.json.results[0]).toMatchObject({ hotspotId: 'ridgelys-beacon', completed: true, badgeEarned: true, score: hotspot.questions.length * (100 + 10 * (hotspot.questions[0]!.timeLimitSeconds - 2)) });
+    expect(doc.items.get(doc.key('PLAYER#user-1', 'RESULT#ridgelys-beacon'))?.['ttl']).toBeUndefined();
 
-    const board = await call('GET', '/leaderboard/uptown');
+    const board = await call('GET', '/leaderboard/ridgelys');
     expect(board.json.entries).toHaveLength(1);
     expect(board.json.entries[0].score).toBe(hotspot.questions.length * (100 + 10 * (hotspot.questions[0]!.timeLimitSeconds - 2)));
   });

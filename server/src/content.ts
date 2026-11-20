@@ -54,6 +54,7 @@ export interface Location {
 // WHO CAN PLAY WHAT (MVP, 4 locations):
 //   Charm City:  Ridgely's = guests,  Inner Harbor = unlocks at sign-up
 //   Queen City:  Uptown = guests,     University = unlocks at sign-up
+// 11/20 release: Ridgely's + University City open to guests; Uptown + Inner Harbor are coming soon.
 //   Federal Hill and NoDa are commented out below (off the map for now).
 export const LOCATIONS: Location[] = [
   // ---- Charm City (Baltimore) ----
@@ -63,7 +64,7 @@ export const LOCATIONS: Location[] = [
     tagline: 'Rowhouses in the shadow of Camden Yards',
     hotspotIds: ['ridgelys-beacon'],
     guestAccessible: true,
-    comingSoon: true, // first release (11/17) is Queen City only
+    // comingSoon: true, // first release (11/17) was Queen City only; open again 11/20
   },
   {
     id: 'inner-harbor',
@@ -97,13 +98,14 @@ export const LOCATIONS: Location[] = [
     tagline: "Charlotte's skyline, the Queen City's core",
     hotspotIds: ['uptown-beacon'],
     guestAccessible: true,
+    comingSoon: true, // 11/20 release: locked for now
   },
   {
     id: 'university',
-    name: 'University',
+    name: 'University City', // 11/20 release; was 'University'
     tagline: 'Campus life and University City',
     hotspotIds: ['university-beacon'],
-    guestAccessible: false,
+    guestAccessible: true, // 11/20 release: Jules is the first character, so anyone can meet him; was false
   },
   // NoDa is off the map for now (11/11). Uncomment to bring it back.
   // {
@@ -181,15 +183,15 @@ export const HOTSPOTS: Hotspot[] = [
     },
     questions: [
       q("rd-1", "Which baseball legend was born on Emory Street in Ridgely's Delight?", ["Babe Ruth", "Cal Ripken Jr.", "Jackie Robinson", "Lou Gehrig"], 0, { image: "images/trivia/rd-1.svg" }),
-      q("rd-2", "Babe Ruth's father ran a saloon on Conway Street. What part of Camden Yards sits there now?", ["Left-center field", "Home plate", "The visitors' dugout", "The Eutaw Street warehouse"], 0, { image: "images/trivia/rd-2.svg" }),
-      q("rd-3", "Two stadiums sit a short walk from Ridgely's. Which teams play in them?", ["The Orioles and the Ravens", "The Orioles and the Colts", "The Nationals and the Ravens", "The Orioles and the Blast"], 0, { image: "images/trivia/rd-3.svg" }),
+      // q("rd-2", "Babe Ruth's father ran a saloon on Conway Street. What part of Camden Yards sits there now?", ["Left-center field", "Home plate", "The visitors' dugout", "The Eutaw Street warehouse"], 0, { image: "images/trivia/rd-2.svg" }), // 11/20: Ridgely's has 5 questions
+      // q("rd-3", "Two stadiums sit a short walk from Ridgely's. Which teams play in them?", ["The Orioles and the Ravens", "The Orioles and the Colts", "The Nationals and the Ravens", "The Orioles and the Blast"], 0, { image: "images/trivia/rd-3.svg" }), // 11/20: Ridgely's has 5 questions
       q("rd-4", "How does a born-and-raised Baltimorean say 'Maryland'?", ["Merlin", "Mary-land", "Mare-uh-land", "Murr-land"], 0, { image: "images/trivia/rd-4.svg", wrongResponse: "Hon, nobody from Baltimore says it like that." }),
       q("rd-5", "When a home run lands on Eutaw Street, what marks the spot?", ["A bronze plaque in the ground", "An orange painted O", "A brick with the batter's name", "Nothing. They keep the ball"], 0, { image: "images/trivia/rd-5.svg" }),
       q("rd-6", "Who is the only player to hit the B&O Warehouse on the fly?", ["Ken Griffey Jr.", "Cal Ripken Jr.", "Mark McGwire", "Chris Davis"], 0, { image: "images/trivia/rd-6.svg" }),
       q("rd-7", "During the national anthem at an Orioles game, what do fans shout at \"Oh, say does that star-spangled...\"?", ["\"O!\"", "\"Birds!\"", "\"Hon!\"", "\"Play ball!\""], 0, { image: "images/trivia/rd-7.svg" }),
-      q("rd-8", "Which former Oriole has a barbecue stand on Eutaw Street?", ["Boog Powell", "Brooks Robinson", "Jim Palmer", "Eddie Murray"], 0, { image: "images/trivia/rd-8.svg" }),
-      q("rd-9", "In 1792, part of the Ridgely's Delight land was renamed Fayetteville to honor which French hero?", ["The Marquis de Lafayette", "Napoleon", "Rochambeau", "Joan of Arc"], 0, { image: "images/trivia/rd-9.svg" }),
-      q("rd-10", "Which train station sits right by Ridgely's, behind the warehouse?", ["Camden Station", "Penn Station", "President Street Station", "Union Station"], 0, { image: "images/trivia/rd-10.svg" }),
+      // q("rd-8", "Which former Oriole has a barbecue stand on Eutaw Street?", ["Boog Powell", "Brooks Robinson", "Jim Palmer", "Eddie Murray"], 0, { image: "images/trivia/rd-8.svg" }), // 11/20: Ridgely's has 5 questions
+      // q("rd-9", "In 1792, part of the Ridgely's Delight land was renamed Fayetteville to honor which French hero?", ["The Marquis de Lafayette", "Napoleon", "Rochambeau", "Joan of Arc"], 0, { image: "images/trivia/rd-9.svg" }), // 11/20: Ridgely's has 5 questions
+      // q("rd-10", "Which train station sits right by Ridgely's, behind the warehouse?", ["Camden Station", "Penn Station", "President Street Station", "Union Station"], 0, { image: "images/trivia/rd-10.svg" }), // 11/20: Ridgely's has 5 questions
       // Before 11/12 (kept for reference):
       // q('rd-1', "Which baseball legend was born on Emory Street in Ridgely's Delight?", ['Babe Ruth', 'Cal Ripken Jr.', 'Jackie Robinson', 'Lou Gehrig'], 0),
       // q('rd-2', "Babe Ruth's father ran a saloon on Conway Street. What part of Camden Yards sits there now?", ['Left-center field', 'Home plate', "The visitors' dugout", 'The Eutaw Street warehouse'], 0),
@@ -252,13 +254,13 @@ export const HOTSPOTS: Hotspot[] = [
   {
     id: 'university-beacon',
     locationId: 'university',
-    name: 'University',
+    name: 'University City', // 11/20 release; was 'University'
     badge: {
       id: 'campus-scholar',
       // was: 'Campus Scholar'
       name: 'Scholarly Scholar',
       icon: '🎓',
-      description: 'Awarded for completing the University challenge.',
+      description: 'Awarded for completing the University City challenge.',
     },
     questions: [
       q("un-1", "If you lived in Belk Hall, which building would be a nightmare to walk to?", ["Duke Centennial Hall", "Atkins Library", "The Student Union", "Prospector"], 0, { image: "images/trivia/un-1.svg", wrongResponse: "Clearly you've never made that walk." }),

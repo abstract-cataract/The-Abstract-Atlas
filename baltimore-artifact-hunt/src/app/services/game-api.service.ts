@@ -5,6 +5,7 @@ import {
   LeaderboardRow,
   LocationView,
   MeResponse,
+  RunSummary,
   StartResponse,
 } from '../models/api.models';
 import { AuthService } from './auth.service';
@@ -112,18 +113,25 @@ export class GameApiService {
   }
 
   // ------------------------------------------------------------- challenges
-  async startChallenge(hotspotId: string): Promise<StartResponse> {
+  /** 11/20: pass challengeRunId to play a friend's exact run (from their challenge link). */
+  async startChallenge(hotspotId: string, challengeRunId?: string): Promise<StartResponse> {
     await this.ensureCaller();
+    const body = challengeRunId ? { challengeRunId } : undefined;
     try {
-      return await this.request<StartResponse>('POST', `/challenges/${hotspotId}/start`);
+      return await this.request<StartResponse>('POST', `/challenges/${hotspotId}/start`, body);
     } catch (e) {
       if (e instanceof ApiError && e.code === 'INVALID_GUEST_TOKEN') {
         this.clearGuest();
         await this.ensureCaller();
-        return this.request<StartResponse>('POST', `/challenges/${hotspotId}/start`);
+        return this.request<StartResponse>('POST', `/challenges/${hotspotId}/start`, body);
       }
       throw e;
     }
+  }
+
+  /** 11/20: look up a challenge link (no login needed). */
+  async getRun(runId: string): Promise<{ run: RunSummary; locationName: string }> {
+    return this.request<{ run: RunSummary; locationName: string }>('GET', `/runs/${encodeURIComponent(runId)}`);
   }
 
   async answer(hotspotId: string, attemptId: string, choiceIndex: number | null): Promise<AnswerResponse> {

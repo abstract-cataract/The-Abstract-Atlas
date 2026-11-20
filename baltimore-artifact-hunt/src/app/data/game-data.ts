@@ -12,6 +12,7 @@ import { City, CityLocation, Hotspot } from '../models/game.models';
 // WHO CAN PLAY WHAT (MVP, 4 locations):
 //   Charm City:  Ridgely's = guests,  Inner Harbor = unlocks at sign-up
 //   Queen City:  Uptown = guests,     University = unlocks at sign-up
+// 11/20 release: Ridgely's + University City open to guests; Uptown + Inner Harbor are coming soon.
 //   Federal Hill and NoDa are commented out below (off the map for now).
 // The server enforces this in server/src/content.ts (guestAccessible / comingSoon). Keep both in sync.
 export const CITY_LOCATIONS: CityLocation[] = [
@@ -23,7 +24,7 @@ export const CITY_LOCATIONS: CityLocation[] = [
     name: "Ridgely's",
     tagline: 'Rowhouses in the shadow of Camden Yards',
     hotspotIds: ['ridgelys-beacon'],
-    comingSoon: true, // first release (11/17) is Queen City only
+    // comingSoon: true, // first release (11/17) was Queen City only; open again 11/20
   },
   {
     id: 'inner-harbor',
@@ -57,11 +58,12 @@ export const CITY_LOCATIONS: CityLocation[] = [
     name: 'Uptown',
     tagline: "Charlotte's skyline, the Queen City's core",
     hotspotIds: ['uptown-beacon'],
+    comingSoon: true, // 11/20 release: locked for now
   },
   {
     id: 'university',
     cityId: 'charlotte',
-    name: 'University',
+    name: 'University City', // 11/20 release; was 'University'
     tagline: 'Campus life and University City',
     hotspotIds: ['university-beacon'],
   },
@@ -81,14 +83,14 @@ export const CITIES: City[] = [
   {
     id: 'charlotte',
     name: 'Queen City',
-    tagline: 'Charlotte: Uptown and University',
+    tagline: 'Charlotte: Uptown and University City', // 11/20 release; was 'Charlotte: Uptown and University'
     locationIds: ['uptown', 'university'], // NoDa removed for now: 'noda'
   },
   {
     id: 'baltimore',
     name: 'Charm City',
     tagline: "Baltimore: Ridgely's and the Inner Harbor",
-    comingSoon: true, // first release (11/17) is Queen City only
+    // comingSoon: true, // first release (11/17) was Queen City only; Charm City open again 11/20
     locationIds: ['ridgelys', 'inner-harbor'], // Federal Hill removed for now: 'federal-hill'
   },
 ];
@@ -138,7 +140,9 @@ export const HOTSPOTS: Hotspot[] = [
     characters: [
       {
         id: 'lady-locness',
-        name: 'Lady Locness',
+        // was: name: 'Lady Locness'
+        name: 'Coming soon', // 11/20 release
+        comingSoon: true,
         story: "The Harbor's Keeper",
       },
     ],
@@ -196,15 +200,15 @@ export const HOTSPOTS: Hotspot[] = [
     challengeType: 'trivia',
     triviaQuestions: [
       q("rd-1", "Which baseball legend was born on Emory Street in Ridgely's Delight?", ["Babe Ruth", "Cal Ripken Jr.", "Jackie Robinson", "Lou Gehrig"], 0, { image: "images/trivia/rd-1.svg" }),
-      q("rd-2", "Babe Ruth's father ran a saloon on Conway Street. What part of Camden Yards sits there now?", ["Left-center field", "Home plate", "The visitors' dugout", "The Eutaw Street warehouse"], 0, { image: "images/trivia/rd-2.svg" }),
-      q("rd-3", "Two stadiums sit a short walk from Ridgely's. Which teams play in them?", ["The Orioles and the Ravens", "The Orioles and the Colts", "The Nationals and the Ravens", "The Orioles and the Blast"], 0, { image: "images/trivia/rd-3.svg" }),
+      // q("rd-2", "Babe Ruth's father ran a saloon on Conway Street. What part of Camden Yards sits there now?", ["Left-center field", "Home plate", "The visitors' dugout", "The Eutaw Street warehouse"], 0, { image: "images/trivia/rd-2.svg" }), // 11/20: Ridgely's has 5 questions
+      // q("rd-3", "Two stadiums sit a short walk from Ridgely's. Which teams play in them?", ["The Orioles and the Ravens", "The Orioles and the Colts", "The Nationals and the Ravens", "The Orioles and the Blast"], 0, { image: "images/trivia/rd-3.svg" }), // 11/20: Ridgely's has 5 questions
       q("rd-4", "How does a born-and-raised Baltimorean say 'Maryland'?", ["Merlin", "Mary-land", "Mare-uh-land", "Murr-land"], 0, { image: "images/trivia/rd-4.svg", wrongResponse: "Hon, nobody from Baltimore says it like that." }),
       q("rd-5", "When a home run lands on Eutaw Street, what marks the spot?", ["A bronze plaque in the ground", "An orange painted O", "A brick with the batter's name", "Nothing. They keep the ball"], 0, { image: "images/trivia/rd-5.svg" }),
       q("rd-6", "Who is the only player to hit the B&O Warehouse on the fly?", ["Ken Griffey Jr.", "Cal Ripken Jr.", "Mark McGwire", "Chris Davis"], 0, { image: "images/trivia/rd-6.svg" }),
       q("rd-7", "During the national anthem at an Orioles game, what do fans shout at \"Oh, say does that star-spangled...\"?", ["\"O!\"", "\"Birds!\"", "\"Hon!\"", "\"Play ball!\""], 0, { image: "images/trivia/rd-7.svg" }),
-      q("rd-8", "Which former Oriole has a barbecue stand on Eutaw Street?", ["Boog Powell", "Brooks Robinson", "Jim Palmer", "Eddie Murray"], 0, { image: "images/trivia/rd-8.svg" }),
-      q("rd-9", "In 1792, part of the Ridgely's Delight land was renamed Fayetteville to honor which French hero?", ["The Marquis de Lafayette", "Napoleon", "Rochambeau", "Joan of Arc"], 0, { image: "images/trivia/rd-9.svg" }),
-      q("rd-10", "Which train station sits right by Ridgely's, behind the warehouse?", ["Camden Station", "Penn Station", "President Street Station", "Union Station"], 0, { image: "images/trivia/rd-10.svg" }),
+      // q("rd-8", "Which former Oriole has a barbecue stand on Eutaw Street?", ["Boog Powell", "Brooks Robinson", "Jim Palmer", "Eddie Murray"], 0, { image: "images/trivia/rd-8.svg" }), // 11/20: Ridgely's has 5 questions
+      // q("rd-9", "In 1792, part of the Ridgely's Delight land was renamed Fayetteville to honor which French hero?", ["The Marquis de Lafayette", "Napoleon", "Rochambeau", "Joan of Arc"], 0, { image: "images/trivia/rd-9.svg" }), // 11/20: Ridgely's has 5 questions
+      // q("rd-10", "Which train station sits right by Ridgely's, behind the warehouse?", ["Camden Station", "Penn Station", "President Street Station", "Union Station"], 0, { image: "images/trivia/rd-10.svg" }), // 11/20: Ridgely's has 5 questions
       // Before 11/12 (kept for reference):
       // q('rd-1', "Which baseball legend was born on Emory Street in Ridgely's Delight?", ['Babe Ruth', 'Cal Ripken Jr.', 'Jackie Robinson', 'Lou Gehrig'], 0),
       // q('rd-2', "Babe Ruth's father ran a saloon on Conway Street. What part of Camden Yards sits there now?", ['Left-center field', 'Home plate', "The visitors' dugout", 'The Eutaw Street warehouse'], 0),
@@ -220,7 +224,9 @@ export const HOTSPOTS: Hotspot[] = [
     characters: [
       {
         id: 'ray-vin',
-        name: 'Ray Vin',
+        // was: name: 'Ray Vin'
+        name: 'Coming soon', // 11/20 release
+        comingSoon: true,
         story: 'someone who can trance you into a conversation',
       },
     ],
@@ -316,7 +322,8 @@ export const HOTSPOTS: Hotspot[] = [
       {
         id: 'jesus-saves-guy',
         comingSoon: true, // until his picture is drawn
-        name: 'The "Jesus Saves!" Guy',
+        // was: name: 'The "Jesus Saves!" Guy'
+        name: 'Coming soon', // 11/20 release
         // photo: 'images/characters/jesus-saves-guy.jpg', // <- uncomment once the picture is in public/images/characters/
         // was: 'PLACEHOLDER — a short story about who he is goes here.'
         story: 'Heard from afar, seen rarely',
@@ -330,17 +337,17 @@ export const HOTSPOTS: Hotspot[] = [
   {
     id: 'university-beacon',
     locationId: 'university',
-    name: 'University',
+    name: 'University City', // 11/20 release; was 'University'
     category: 'landmark',
     // was: 'Campus life & University City'
     knownFor: "UNC Charlotte, Partying, Late-night Fun",
     guideBlurb:
-      'The University area around UNC Charlotte, north of Uptown, is where students, researchers, and neighbors share a fast-growing corner of the city.',
+      'The University City area around UNC Charlotte, north of Uptown, is where students, researchers, and neighbors share a fast-growing corner of the city.',
     story: {
       // was: 'The Gold Rush Scholars'
       title: "Now You See Me, Now You See Me Again",
-      body: 'PLACEHOLDER STORY COPY — replace with the official University story.',
-      footer: '— a local University legend',
+      body: 'PLACEHOLDER STORY COPY — replace with the official University City story.',
+      footer: '— a local University City legend',
     },
     challengeType: 'trivia',
     triviaQuestions: [
@@ -366,7 +373,7 @@ export const HOTSPOTS: Hotspot[] = [
       // was: 'Campus Scholar'
       name: 'Scholarly Scholar',
       icon: '🎓',
-      description: 'Awarded for completing the University challenge.',
+      description: 'Awarded for completing the University City challenge.',
     },
     characters: [
       {

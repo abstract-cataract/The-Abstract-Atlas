@@ -12,7 +12,7 @@ export const APP_CONFIG = {
    * hasn't loaded (or can't be reached), so the map never shows account-only locations as open.
    * The server is still the source of truth and enforces this in server/src/content.ts.
    */
-  guestLocationIds: ['uptown'], // first release (11/17); was ['ridgelys', 'uptown']
+  guestLocationIds: ['ridgelys', 'university'], // 11/20 release; was ['uptown'] (11/17), before that ['ridgelys', 'uptown']
 
   apiUrl: 'https://hprn6cli18.execute-api.us-east-1.amazonaws.com',
   cognito: {

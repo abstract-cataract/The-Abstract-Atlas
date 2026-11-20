@@ -5,10 +5,10 @@ import { getHotspot } from '../src/content.js';
 import { FEEDBACK_MS } from '../src/scoring.js';
 import { MemoryRepo } from './memoryRepo.js';
 
-// The guest location's challenge (Uptown, since the 11/17 first release; was Ridgely's). Expected scores scale with its question count,
+// The guest location's challenge (Ridgely's again since the 11/20 release; Uptown for 11/17). Expected scores scale with its question count,
 // so adding or removing questions doesn't break these tests.
-const GUEST_HS = 'uptown-beacon';
-const GUEST_LOC = 'uptown';
+const GUEST_HS = 'ridgelys-beacon';
+const GUEST_LOC = 'ridgelys';
 const N = getHotspot(GUEST_HS)!.questions.length;
 // Seconds per question (15 since 11/11). pts(s) = points for a right answer given after s seconds.
 const T = getHotspot(GUEST_HS)!.questions[0]!.timeLimitSeconds;
@@ -83,19 +83,19 @@ async function playRun(headers: Record<string, string>, hotspotId: string, opts:
 }
 
 describe('guest flow', () => {
-  it("creates a guest who can play only Ridgely's and Uptown", async () => {
+  it("creates a guest who can play Ridgely's and University City (11/20 release)", async () => {
     const guest = await newGuest();
     const { json } = await call('GET', '/locations', { headers: guest });
     const byId = Object.fromEntries(json.locations.map((l: any) => [l.id, l.accessible]));
-    expect(byId).toEqual({ ridgelys: false, 'inner-harbor': false, uptown: true, university: false });
+    expect(byId).toEqual({ ridgelys: true, 'inner-harbor': false, uptown: false, university: true });
   });
 
-  it('blocks guests from other locations with the list of what signing up unlocks', async () => {
+  it('blocks guests from coming-soon locations (signing up unlocks nothing extra right now)', async () => {
     const guest = await newGuest();
     const res = await call('POST', '/challenges/inner-harbor-beacon/start', { headers: guest });
     expect(res.status).toBe(403);
     expect(res.json.error.code).toBe('LOCATION_LOCKED');
-    expect(res.json.error.unlockedBySignUp.map((l: any) => l.id)).toEqual(['university']);
+    expect(res.json.error.unlockedBySignUp).toEqual([]);
   });
 
   it('never sends correct answers to the client when a run starts', async () => {
@@ -109,15 +109,15 @@ describe('guest flow', () => {
     const guest = await newGuest();
     const result = (await playRun(guest, GUEST_HS)).result;
     expect(result).toMatchObject({ correctAnswers: N, totalQuestions: N, score: N * pts(2), completed: true, badgeEarned: true });
-    expect(result.badge.id).toBe('queen-city-climber');
+    expect(result.badge.id).toBe('delight-seeker');
   });
 
   it("shows the sign-up prompt with unlocked locations when a guest completes Ridgely's", async () => {
     const guest = await newGuest();
     const result = (await playRun(guest, GUEST_HS)).result;
     expect(result.locationCompleted).toBe(true);
-    expect(result.signUpPrompt.badges.map((b: any) => b.id)).toEqual(['queen-city-climber']);
-    expect(result.signUpPrompt.unlockedLocations.map((l: any) => l.name)).toEqual(['University']);
+    expect(result.signUpPrompt.badges.map((b: any) => b.id)).toEqual(['delight-seeker']);
+    expect(result.signUpPrompt.unlockedLocations).toEqual([]);
   });
 
   it('does not show the sign-up prompt to signed-in users', async () => {
@@ -173,13 +173,13 @@ describe('question timing', () => {
 });
 
 describe('accounts and leaderboard', () => {
-  it('lets signed-in users play the sign-up locations', async () => {
-    for (const id of ['university-beacon']) {
+  it('lets signed-in users play the open locations, and nobody the coming-soon ones', async () => {
+    for (const id of ['university-beacon', 'ridgelys-beacon']) {
       const res = await call('POST', `/challenges/${id}/start`, { headers: user('u1') });
       expect(res.status).toBe(200);
     }
-    // Charm City is coming soon in the first release: closed even with an account.
-    for (const id of ['ridgelys-beacon', 'inner-harbor-beacon']) {
+    // 11/20 release: Uptown and Inner Harbor are coming soon, closed even with an account.
+    for (const id of ['uptown-beacon', 'inner-harbor-beacon']) {
       expect((await call('POST', `/challenges/${id}/start`, { headers: user('u1') })).status).toBe(403);
     }
   });
@@ -237,7 +237,7 @@ describe('claiming guest progress on sign-up', () => {
     const claim = await call('POST', '/account/claim', { headers: { ...user('newbie', 'newbie@example.com'), ...guest } });
     expect(claim.status).toBe(200);
     expect(claim.json.claimed).toBe(1);
-    expect(claim.json.badges.map((b: any) => b.id)).toEqual(['queen-city-climber']);
+    expect(claim.json.badges.map((b: any) => b.id)).toEqual(['delight-seeker']);
     expect(claim.json.player.isGuest).toBe(false);
     expect(claim.json.player.name).toMatch(/^Explorer-\d{4}$/); // never derived from the email
 
@@ -272,5 +272,91 @@ describe('claiming guest progress on sign-up', () => {
 
     expect((await call('POST', '/account/claim', { headers: guest })).status).toBe(401);
     expect((await call('POST', '/account/claim', { headers: user('n2') })).status).toBe(400);
+  });
+});
+
+// ---------------------------------------------------------------------------------------- 11/20
+describe('what everyone said (answer split)', () => {
+  it('returns the percent of players who picked each choice, in the order shown', async () => {
+    const hs = getHotspot(GUEST_HS)!;
+    // Three players answer question 1: two right, one wrong.
+    const picks: any[] = [];
+    for (const [i, right] of [[0, true], [1, true], [2, false]] as const) {
+      const headers = user(`p${i}`);
+      const start = await call('POST', `/challenges/${GUEST_HS}/start`, { headers });
+      const q = start.json.question;
+      const original = hs.questions.find((x) => x.id === q.id)!;
+      const correctShown = q.choices.indexOf(original.choices[original.correctIndex]);
+      const choiceIndex = right ? correctShown : (correctShown + 1) % q.choices.length;
+      clock += 1000;
+      const res = await call('POST', `/challenges/${GUEST_HS}/answer`, { headers, body: { attemptId: start.json.attemptId, choiceIndex } });
+      picks.push({ res: res.json, correctShown, choiceIndex });
+    }
+    const last = picks[2];
+    expect(last.res.split.answered).toBe(3);
+    expect(last.res.split.percents[last.correctShown]).toBe(67);
+    expect(last.res.split.percents[last.choiceIndex]).toBe(33);
+    expect(last.res.split.percents).toHaveLength(4);
+  });
+
+  it('does not count a timed-out answer', async () => {
+    const headers = user('slowpoke');
+    const start = await call('POST', `/challenges/${GUEST_HS}/start`, { headers });
+    clock += 1000;
+    const res = await call('POST', `/challenges/${GUEST_HS}/answer`, { headers, body: { attemptId: start.json.attemptId, choiceIndex: null } });
+    expect(res.json.split).toEqual({ answered: 0, percents: [0, 0, 0, 0] });
+  });
+});
+
+describe('challenge a friend', () => {
+  it('saves each finished run, and anyone can look it up by its link', async () => {
+    await call('PATCH', '/me', { headers: user('iv'), body: { playerName: 'Iverson' } });
+    const done = await playRun(user('iv'), GUEST_HS, { secondsPerQuestion: 3 });
+    const runId = done.result.runId;
+    expect(runId).toBeTruthy();
+    const look = await call('GET', `/runs/${runId}`); // no login
+    expect(look.status).toBe(200);
+    expect(look.json.run).toMatchObject({ playerName: 'Iverson', correctAnswers: N, totalQuestions: N, seconds: 3 * N, hotspotId: GUEST_HS });
+    expect(look.json.run.answers).toHaveLength(N);
+    expect(look.json.run.choiceOrders).toBeUndefined(); // the answer order stays private
+    expect(look.json.locationName).toBe("Ridgely's");
+    expect((await call('GET', '/runs/nope')).status).toBe(404);
+  });
+
+  it("gives the friend the exact same run and a head-to-head at the end", async () => {
+    await call('PATCH', '/me', { headers: user('iv'), body: { playerName: 'Iverson' } });
+    const mine = await playRun(user('iv'), GUEST_HS, { secondsPerQuestion: 4 });
+    const runId = mine.result.runId;
+
+    const friend = await newGuest();
+    const start = await call('POST', `/challenges/${GUEST_HS}/start`, { headers: friend, body: { challengeRunId: runId } });
+    expect(start.status).toBe(200);
+    expect(start.json.challenge.playerName).toBe('Iverson');
+    const myRun = await repo.getRun(runId);
+    const attempt = await repo.getAttempt([...repo.profiles.keys()].find((k) => k.startsWith('g_'))!, GUEST_HS);
+    expect(attempt!.choiceOrders).toEqual(myRun!.choiceOrders); // same order as the challenger saw
+
+    // Friend finishes the run faster -> wins.
+    const attemptId = start.json.attemptId;
+    let q = start.json.question;
+    let last: any;
+    const hs = getHotspot(GUEST_HS)!;
+    for (let i = 0; i < N; i++) {
+      const original = hs.questions.find((x) => x.id === q.id)!;
+      clock += (i > 0 ? FEEDBACK_MS : 0) + 2000;
+      last = await call('POST', `/challenges/${GUEST_HS}/answer`, { headers: friend, body: { attemptId, choiceIndex: q.choices.indexOf(original.choices[original.correctIndex]) } });
+      q = last.json.next;
+    }
+    expect(last.json.result.versus.outcome).toBe('win');
+    expect(last.json.result.versus.them.playerName).toBe('Iverson');
+    expect(last.json.result.versus.you.score).toBeGreaterThan(last.json.result.versus.them.score);
+    expect(last.json.result.runId).toBeTruthy(); // so the friend can send it back
+  });
+
+  it('refuses a challenge link for a different location', async () => {
+    const mine = await playRun(user('iv'), GUEST_HS);
+    const res = await call('POST', '/challenges/university-beacon/start', { headers: user('x'), body: { challengeRunId: mine.result.runId } });
+    expect(res.status).toBe(404);
+    expect(res.json.error.code).toBe('CHALLENGE_NOT_FOUND');
   });
 });

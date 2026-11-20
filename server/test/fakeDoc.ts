@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { BatchWriteCommand, DeleteCommand, GetCommand, PutCommand, QueryCommand } from '@aws-sdk/lib-dynamodb';
+import { BatchWriteCommand, DeleteCommand, GetCommand, PutCommand, QueryCommand, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 
 /**
  * Minimal in-memory stand-in for the DynamoDB document client: just the commands DynamoRepo uses.
@@ -46,6 +46,17 @@ export class FakeDoc {
         rows = rows.filter((r) => r['PK'] === vals[':pk'] && (!vals[':sk'] || String(r['SK']).startsWith(vals[':sk'])));
       }
       return { Items: rows.map((r) => structuredClone(r)) };
+    }
+    // 11/20: only the "ADD #c :one" counter update that recordAnswer uses.
+    if (cmd instanceof UpdateCommand) {
+      const i = cmd.input;
+      const k = i.Key as Record<string, any>;
+      const field = (i.ExpressionAttributeNames as Record<string, string>)['#c']!;
+      const add = (i.ExpressionAttributeValues as Record<string, number>)[':one']!;
+      const item = this.items.get(this.key(k['PK'], k['SK'])) ?? { PK: k['PK'], SK: k['SK'] };
+      item[field] = (item[field] ?? 0) + add;
+      this.items.set(this.key(k['PK'], k['SK']), item);
+      return { Attributes: structuredClone(item) };
     }
     throw new Error(`FakeDoc doesn't support ${(cmd as any)?.constructor?.name}`);
   }

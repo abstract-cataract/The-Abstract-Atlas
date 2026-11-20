@@ -43,6 +43,36 @@ export interface StartResponse {
   attemptId: string;
   hotspotId: string;
   question: ServerQuestion;
+  /** 11/20: present when this run came from a friend's challenge link. */
+  challenge?: RunSummary;
+}
+
+/** 11/20: a finished run that can be shared as a challenge link. */
+export interface RunSummary {
+  runId: string;
+  hotspotId: string;
+  locationId: string;
+  playerName: string;
+  correctAnswers: number;
+  totalQuestions: number;
+  score: number;
+  seconds: number;
+  /** Right/wrong per question, in question order. */
+  answers: boolean[];
+  createdAt: number;
+}
+
+/** 11/20: you vs. the friend who sent the challenge. */
+export interface Versus {
+  you: RunSummary;
+  them: RunSummary;
+  outcome: 'win' | 'lose' | 'tie';
+}
+
+/** 11/20: "what everyone said": percent of players who picked each choice, in the order shown. */
+export interface AnswerSplit {
+  answered: number;
+  percents: number[];
 }
 
 export interface SignUpPrompt {
@@ -65,6 +95,13 @@ export interface ChallengeResult {
   locationCompleted: boolean;
   /** Present when a guest finishes a location: drives the "sign up to save badges" screen. */
   signUpPrompt?: SignUpPrompt;
+  /** 11/20: id for this run's challenge link. */
+  runId?: string;
+  /** 11/20: seconds spent answering, and right/wrong per question (for the share card). */
+  seconds?: number;
+  answers?: boolean[];
+  /** 11/20: only when this run was a friend's challenge. */
+  versus?: Versus;
 }
 
 export interface AnswerResponse {
@@ -76,6 +113,8 @@ export interface AnswerResponse {
   secondsLeft: number;
   /** Tailored line for this answer, if the question has one. */
   response?: string;
+  /** 11/20: how everyone answered this question. */
+  split?: AnswerSplit;
   done: boolean;
   next?: ServerQuestion;
   result?: ChallengeResult;
