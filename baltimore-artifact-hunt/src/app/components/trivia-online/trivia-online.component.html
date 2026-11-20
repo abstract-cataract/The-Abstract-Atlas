@@ -95,7 +95,7 @@
   <ng-container *ngIf="!api.signedIn() && r.signUpPrompt as prompt">
     <div class="signup-prompt">
       <h4>{{ prompt.message }}</h4>
-      <p class="prompt-warning">Without an account, your badges only live in this browser.</p>
+      <p class="prompt-warning" *ngIf="prompt.unlockedLocations.length">Without an account, your badges only live in this browser.</p><!-- 11/20: the message says this when nothing unlocks -->
       <div class="prompt-badges">
         <span class="prompt-pill" *ngFor="let b of prompt.badges">{{ b.icon }} {{ b.name }}</span>
       </div>

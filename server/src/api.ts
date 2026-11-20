@@ -424,7 +424,11 @@ export function createApi(deps: ApiDeps) {
       ...(caller.kind === 'guest' && locationCompleted
         ? {
             signUpPrompt: {
-              message: 'Sign up to save your badges and unlock more places.',
+              // 11/20: every open location is free to play, so signing up is about keeping your badges.
+              message:
+                locationsUnlockedBySignUp().length > 0
+                  ? 'Sign up to save your badges and unlock more places.'
+                  : 'Sign up to keep your badges. Until then they stay in this browser.',
               badges: earnedBadges(updated),
               unlockedLocations: locationsUnlockedBySignUp(),
             },
