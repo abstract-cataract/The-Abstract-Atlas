@@ -148,7 +148,7 @@ export const HOTSPOTS: Hotspot[] = [
     ],
     unlockRequires: [],
     position: { xPct: 50, yPct: 78 },
-    cityPosition: { xPct: 67, yPct: 78 }, // was 50: two houses per city, evenly spaced
+    cityPosition: { xPct: 72, yPct: 56 }, // was 50: two houses per city, evenly spaced // 11/20: moved up to the middle of the screen and further apart so the names don't overlap on phones; was { xPct: 67, yPct: 78 }
   },
   {
     id: 'federal-hill-beacon',
@@ -180,7 +180,7 @@ export const HOTSPOTS: Hotspot[] = [
     },
     unlockRequires: [],
     position: { xPct: 50, yPct: 78 },
-    cityPosition: { xPct: 80, yPct: 78 },
+    cityPosition: { xPct: 80, yPct: 56 }, // 11/20: moved up to the middle of the screen; was yPct 78
   },
   {
     id: 'ridgelys-beacon',
@@ -232,7 +232,7 @@ export const HOTSPOTS: Hotspot[] = [
     ],
     unlockRequires: [],
     position: { xPct: 50, yPct: 78 },
-    cityPosition: { xPct: 33, yPct: 78 }, // was 20: two houses per city, evenly spaced
+    cityPosition: { xPct: 25, yPct: 56 }, // was 20: two houses per city, evenly spaced // 11/20: moved up to the middle of the screen and further apart so the names don't overlap on phones; was { xPct: 33, yPct: 78 }
   },
   // Pigtown was replaced by Ridgely's. Its hotspot below is no longer listed on the map (no location points to it).
   {
@@ -265,7 +265,7 @@ export const HOTSPOTS: Hotspot[] = [
     },
     unlockRequires: [],
     position: { xPct: 50, yPct: 78 },
-    cityPosition: { xPct: 80, yPct: 78 },
+    cityPosition: { xPct: 80, yPct: 56 }, // 11/20: moved up to the middle of the screen; was yPct 78
   },
 
   // ---------------------------------------------------------------------------
@@ -332,7 +332,7 @@ export const HOTSPOTS: Hotspot[] = [
     ],
     unlockRequires: [],
     position: { xPct: 50, yPct: 78 },
-    cityPosition: { xPct: 33, yPct: 78 }, // was 20: two houses per city, evenly spaced
+    cityPosition: { xPct: 25, yPct: 56 }, // was 20: two houses per city, evenly spaced // 11/20: moved up to the middle of the screen and further apart so the names don't overlap on phones; was { xPct: 33, yPct: 78 }
   },
   {
     id: 'university-beacon',
@@ -417,7 +417,7 @@ Oh, and he's always dressed for the occasion. Though, he could stand to switch u
     ],
     unlockRequires: [],
     position: { xPct: 50, yPct: 78 },
-    cityPosition: { xPct: 67, yPct: 78 }, // was 50: two houses per city, evenly spaced
+    cityPosition: { xPct: 72, yPct: 56 }, // was 50: two houses per city, evenly spaced // 11/20: moved up to the middle of the screen and further apart so the names don't overlap on phones; was { xPct: 67, yPct: 78 }
   },
   {
     id: 'noda-beacon',
@@ -448,7 +448,7 @@ Oh, and he's always dressed for the occasion. Though, he could stand to switch u
     characters: [],
     unlockRequires: [],
     position: { xPct: 50, yPct: 78 },
-    cityPosition: { xPct: 80, yPct: 78 },
+    cityPosition: { xPct: 80, yPct: 56 }, // 11/20: moved up to the middle of the screen; was yPct 78
   },
 ];
 

@@ -534,3 +534,26 @@
     bottom: calc(150px + env(safe-area-inset-bottom, 0px)); /* was 84px */
   }
 }
+
+/* 11/20 (iPhone fix): 100vh on iPhone Safari is taller than what you can see (it counts the space behind the
+   address bar), so things pinned to the bottom of the scene slid under the toolbar and the sign up pill.
+   dvh = the height you can actually see. Browsers without dvh keep using the 100vh above. */
+#zoom-wrap {
+  height: 100dvh; /* was 100vh */
+}
+/* Enable tilt and the hint sit higher, well clear of the sign up / log in pill (which can wrap to 2 rows). */
+#tilt-button {
+  bottom: calc(120px + env(safe-area-inset-bottom, 0px)); /* was 88px, before that 24px */
+}
+#tilt-denied {
+  bottom: calc(176px + env(safe-area-inset-bottom, 0px)); /* was 150px */
+}
+@media (hover: none) and (pointer: coarse), (max-width: 720px) {
+  #hint {
+    bottom: calc(180px + env(safe-area-inset-bottom, 0px)); /* was 150px */
+  }
+}
+/* 11/20: houses now sit in the middle of the screen, so keep them in front of the street signs and foreground art */
+.layer.interactive {
+  z-index: 6;
+}
