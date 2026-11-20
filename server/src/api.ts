@@ -443,7 +443,8 @@ export function createApi(deps: ApiDeps) {
               message:
                 locationsUnlockedBySignUp().length > 0
                   ? 'Sign up to save your badges and unlock more places.'
-                  : 'Sign up to keep your badges. Until then they stay in this browser.',
+                  : 'Sign up to keep your badges and place on the leaderboard. Until then they stay in this browser.',
+              // was: 'Sign up to keep your badges. Until then they stay in this browser.'
               badges: earnedBadges(updated),
               unlockedLocations: locationsUnlockedBySignUp(),
             },

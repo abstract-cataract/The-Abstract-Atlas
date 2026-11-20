@@ -14,14 +14,7 @@ export const APP_CONFIG = {
    */
   guestLocationIds: ['ridgelys', 'university'], // 11/20 release; was ['uptown'] (11/17), before that ['ridgelys', 'uptown']
 
-  /**
-   * 11/20: the address challenge links point to. '' = whatever address the player opened the game at
-   * (right now https://iversonruffin.github.io/The-Abstract-Atlas/).
-   * Only set this to an address that loads the game itself and keeps the "?challenge=..." part, e.g.
-   *   shareBaseUrl: 'https://www.iversonruffin.com/abstract-atlas/',
-   * A page that shows the game inside a frame won't pass the challenge through.
-   */
-  shareBaseUrl: '',
+  // 11/20: challenge links use whatever address the game is open at (github.io live, localhost with ng serve).
 
   apiUrl: 'https://hprn6cli18.execute-api.us-east-1.amazonaws.com',
   cognito: {

@@ -1,5 +1,4 @@
 import { Injectable, signal } from '@angular/core';
-import { APP_CONFIG } from '../config/app-config';
 import { RunSummary } from '../models/api.models';
 import { GameApiService } from './game-api.service';
 import { GameDataService } from './game-data.service';
@@ -76,9 +75,7 @@ export class ChallengeLinkService {
 
   /** The link to send for a finished run. */
   static linkFor(runId: string): string {
-    // 11/20: APP_CONFIG.shareBaseUrl can point links at another address (e.g. iversonruffin.com).
-    const base = APP_CONFIG.shareBaseUrl || document.baseURI;
-    return new URL('./?challenge=' + encodeURIComponent(runId), base.endsWith('/') ? base : base + '/').href;
-    // was: return new URL('./?challenge=' + encodeURIComponent(runId), document.baseURI).href;
+    // Uses the address the game is open at: github.io when live, localhost:4200 with ng serve.
+    return new URL('./?challenge=' + encodeURIComponent(runId), document.baseURI).href;
   }
 }
