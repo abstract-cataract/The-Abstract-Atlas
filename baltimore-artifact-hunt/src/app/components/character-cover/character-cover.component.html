@@ -33,7 +33,7 @@
       <!-- 11/18: name taken off the top of the cover (it's still in the story beside it). To bring it back, uncomment:
       <h2 class="cc-title">{{ character.name }}</h2>
       -->
-      <span class="cc-sticker">{{ locationName }}</span>
+      <span class="cc-sticker" [attr.data-location]="locationName">{{ locationName }}</span>
       <div class="cc-shine"></div>
     </div>
 

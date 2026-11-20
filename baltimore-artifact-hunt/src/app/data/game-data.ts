@@ -374,19 +374,34 @@ export const HOTSPOTS: Hotspot[] = [
         name: 'Jules Redrun',
         story: 'Everywhere and not',
         // 11/19: Jules's full story (blank lines = new paragraphs)
+        // 11/19 new bio; the previous one is kept in the comment below
         fullStory: `Everything may seem normal.
 
 You go about your day, foot by foot like everyone else.
 
 You get your cookout trays and Chex and wings, but damnit…something doesn't feel right.
 
-No sauces in the bags. (Well, that's actually pretty normal.) Jamming your foot into something you tried to avoid, losing the keys to your car when you're already late.
+No sauces in the bags. (Well, that's actually pretty normal.) Jamming your foot into something you tried to avoid, losing your keys to the car when you're already late.
 
-Then it hits you, all the little inconveniences throughout the day only hit you. All the signs that he's around.
+Inconvenience after inconvenience, happening to you, happening to others…
+All the signs that he's around.
 
-Jules Redrun. You've probably seen him, maybe talked to him without knowing so, or thought you've heard him speak, because he's everywhere…and not. Your barber, your bartender, your socks, your missing nail. Hell, he's probably your Honda Civic outside right now, but he's out there somewhere, blending into your world right before your eyes.
+Jules Redrun. You've probably seen him, maybe talked to him without knowing so, or thought you heard him speak - from here, there, everywhere… and not. Your barber, your bartender, your socks, your missing nail. Hell, he's probably your Honda Civic outside right now, but he's out there somewhere, blending into your world right before your eyes.
 
-Oh, and he's always dressed for the occasion. He wears that tie like it gives him powers or something.`,
+Oh, and he's always dressed for the occasion. Though, he could stand to switch up that tie every now and then.`,
+        // was:         fullStory: `Everything may seem normal.
+        //
+        // was: You go about your day, foot by foot like everyone else.
+        //
+        // was: You get your cookout trays and Chex and wings, but damnit…something doesn't feel right.
+        //
+        // was: No sauces in the bags. (Well, that's actually pretty normal.) Jamming your foot into something you tried to avoid, losing the keys to your car when you're already late.
+        //
+        // was: Then it hits you, all the little inconveniences throughout the day only hit you. All the signs that he's around.
+        //
+        // was: Jules Redrun. You've probably seen him, maybe talked to him without knowing so, or thought you've heard him speak, because he's everywhere…and not. Your barber, your bartender, your socks, your missing nail. Hell, he's probably your Honda Civic outside right now, but he's out there somewhere, blending into your world right before your eyes.
+        //
+        // was: Oh, and he's always dressed for the occasion. He wears that tie like it gives him powers or something.`,
         // Cover layers (11/18). Same file names = just drop the full-size versions in public/images/characters/.
         coverBackground: 'images/characters/jules-redrun-bg.jpg',
         coverFlag: 'images/characters/jules-redrun-flag.png',

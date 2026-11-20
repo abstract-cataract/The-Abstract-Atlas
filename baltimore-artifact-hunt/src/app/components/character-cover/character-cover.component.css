@@ -384,3 +384,13 @@
   font-weight: bold;
   font-size: 1.15em;
 }
+
+/* 11/19: University's sticker is green (the rest stay red). Add a line like this for any other location. */
+.cc-sticker[data-location="University"] {
+  background: #00a84f;
+}
+
+/* 11/19: a single line break inside a paragraph shows as a new line (blank line = new paragraph) */
+.cc-story p {
+  white-space: pre-line;
+}
