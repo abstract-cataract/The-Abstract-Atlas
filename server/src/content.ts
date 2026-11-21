@@ -273,7 +273,8 @@ export const HOTSPOTS: Hotspot[] = [
       q("un-1", "If you lived in Belk Hall, which building would be a nightmare to walk to?", ["Duke Centennial Hall", "Atkins Library", "The Student Union", "Prospector"], 0, { image: "images/trivia/un-1.svg", wrongResponse: "Clearly you've never made that walk.", halfCredit: [3], choiceResponses: [null, null, null, "Ok, fine this one can count."] }),
       // was: q("un-1", "If you lived in Belk Hall, which building would be a nightmare to walk to?", ["Duke Centennial Hall", "Atkins Library", "The Student Union", "Prospector"], 0, { image: "images/trivia/un-1.svg", wrongResponse: "Clearly you've never made that walk." }),
       q("un-2", "What animal statue stands outside Woodward Hall?", ["An eagle", "A lion", "A horse", "A bear"], 0, { image: "images/trivia/un-2.svg" }),
-      q("un-3", "Which energy drink's trucks are always rolling around campus?", ["Red Bull", "Monster", "Celsius", "Bang"], 0, { image: "images/trivia/un-3.svg" }),
+      q("un-3", "Which energy drink's trucks are usually rolling around UNC Charlotte's campus?", ["Red Bull", "Monster", "Celsius", "Bang"], 0, { image: "images/trivia/un-3.svg" }),
+      // was: q("un-3", "Which energy drink's trucks are always rolling around campus?", ...) (11/21: matched to your edit in game-data.ts)
       q("un-4", "Which building did a deer once smash its way out of?", ["Woodward Hall", "Atkins Library", "Belk Hall", "The Student Union"], 0, { image: "images/trivia/un-4.svg" }),
       // q("un-5", "UNC Charlotte's athletic teams are called the:", ["49ers", "Tar Heels", "Wolfpack", "Blue Devils"], 0, { image: "images/trivia/un-5.svg" }), // 11/20: 5 questions per location
       // q("un-6", "The '49ers' name nods to which part of the region's history?", ["The gold rush", "The railroad boom", "The tobacco trade", "The shipbuilding era"], 0, { image: "images/trivia/un-6.svg" }), // 11/20: 5 questions per location
