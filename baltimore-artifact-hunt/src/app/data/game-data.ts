@@ -202,7 +202,9 @@ export const HOTSPOTS: Hotspot[] = [
       q("rd-1", "Which baseball legend was born on Emory Street in Ridgely's Delight?", ["Babe Ruth", "Cal Ripken Jr.", "Jackie Robinson", "Lou Gehrig"], 0, { image: "images/trivia/rd-1.svg" }),
       // q("rd-2", "Babe Ruth's father ran a saloon on Conway Street. What part of Camden Yards sits there now?", ["Left-center field", "Home plate", "The visitors' dugout", "The Eutaw Street warehouse"], 0, { image: "images/trivia/rd-2.svg" }), // 11/20: Ridgely's has 5 questions
       // q("rd-3", "Two stadiums sit a short walk from Ridgely's. Which teams play in them?", ["The Orioles and the Ravens", "The Orioles and the Colts", "The Nationals and the Ravens", "The Orioles and the Blast"], 0, { image: "images/trivia/rd-3.svg" }), // 11/20: Ridgely's has 5 questions
-      q("rd-4", "How does a born-and-raised Baltimorean say 'Maryland'?", ["Merlin", "Mary-land", "Mare-uh-land", "Murr-land"], 0, { image: "images/trivia/rd-4.svg", wrongResponse: "Hon, nobody from Baltimore says it like that." }),
+      // 11/21: replaces the "Maryland" question (kept below). Photo from Wikimedia Commons (CC BY-SA 3.0): both stadiums are on the left.
+      q("rd-11", "How far apart are the Orioles' stadium and the Ravens' stadium?", ["Right next door", "About a mile apart", "Across the harbor", "Opposite ends of the city"], 0, { image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Baltimore_Aerial.JPG/1024px-Baltimore_Aerial.JPG", imageCredit: { text: "Photo by Fletcher6, Wikimedia Commons, CC BY-SA 3.0", url: "https://commons.wikimedia.org/wiki/File:Baltimore_Aerial.JPG" } }),
+      // was: q("rd-4", "How does a born-and-raised Baltimorean say 'Maryland'?", ["Merlin", "Mary-land", "Mare-uh-land", "Murr-land"], 0, { image: "images/trivia/rd-4.svg", wrongResponse: "Hon, nobody from Baltimore says it like that." }),
       q("rd-5", "When a home run lands on Eutaw Street, what marks the spot?", ["A bronze plaque in the ground", "An orange painted O", "A brick with the batter's name", "Nothing. They keep the ball"], 0, { image: "images/trivia/rd-5.svg" }),
       q("rd-6", "Who is the only player to hit the B&O Warehouse on the fly?", ["Ken Griffey Jr.", "Cal Ripken Jr.", "Mark McGwire", "Chris Davis"], 0, { image: "images/trivia/rd-6.svg" }),
       q("rd-7", "During the national anthem at an Orioles game, what do fans shout at \"Oh, say does that star-spangled...\"?", ["\"O!\"", "\"Birds!\"", "\"Hon!\"", "\"Play ball!\""], 0, { image: "images/trivia/rd-7.svg" }),
@@ -412,9 +414,11 @@ Oh, and he's always dressed for the occasion. Though, he could stand to switch u
         //
         // was: Oh, and he's always dressed for the occasion. He wears that tie like it gives him powers or something.`,
         // Cover layers (11/18). Same file names = just drop the full-size versions in public/images/characters/.
-        coverBackground: 'images/characters/jules-redrun-bg.jpg',
-        coverFlag: 'images/characters/jules-redrun-flag.png',
-        coverArt: 'images/characters/jules-redrun.png',
+        // 11/21: smaller .webp copies (about half the size) so the cover opens faster on phones.
+        // was: 'images/characters/jules-redrun-bg.jpg', '...-flag.png', '...redrun.png' (still in the folder)
+        coverBackground: 'images/characters/jules-redrun-bg.webp',
+        coverFlag: 'images/characters/jules-redrun-flag.webp',
+        coverArt: 'images/characters/jules-redrun.webp',
       },
     ],
     unlockRequires: [],
@@ -454,8 +458,8 @@ Oh, and he's always dressed for the occasion. Though, he could stand to switch u
   },
 ];
 
-// Optional 5th argument: { image, wrongResponse, correctResponse, choiceResponses, halfCredit }. Example:
+// Optional 5th argument: { image, imageCredit, wrongResponse, correctResponse, choiceResponses, halfCredit }. Example:
 //   q('up-8', 'Which stop drops you off here?', ['CTC', ...], 0, { image: 'images/trivia/ctc.jpg', wrongResponse: "Ok, well that's DEFINITELY not right." })
-function q(id: string, prompt: string, choices: string[], correctIndex: number, extra: { image?: string; wrongResponse?: string; correctResponse?: string; choiceResponses?: (string | null)[]; halfCredit?: number[] } = {}) {
+function q(id: string, prompt: string, choices: string[], correctIndex: number, extra: { image?: string; wrongResponse?: string; correctResponse?: string; choiceResponses?: (string | null)[]; halfCredit?: number[]; imageCredit?: { text: string; url: string } } = {}) {
   return { id, prompt, choices, correctIndex, timeLimitSeconds: 15, ...extra }; // was 10
 }

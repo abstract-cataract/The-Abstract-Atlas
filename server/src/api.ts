@@ -127,6 +127,7 @@ export function createApi(deps: ApiDeps) {
       choices: order.map((originalIndex) => question.choices[originalIndex]!),
       timeLimitSeconds: question.timeLimitSeconds,
       image: question.image,
+      imageCredit: question.imageCredit, // 11/21
     };
   }
 

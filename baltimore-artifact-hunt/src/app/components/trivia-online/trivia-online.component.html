@@ -13,7 +13,15 @@
   </div>
 
   <!-- Picture for this question, if it has one. -->
-  <img class="trivia-image" *ngIf="question.image" [src]="question.image" alt="" />
+  <!-- 11/21: picture with a small "i" that shows where it came from -->
+  <figure class="trivia-figure" *ngIf="question.image && !imageFailed">
+    <img class="trivia-image" [src]="question.image" alt="" (error)="imageFailed = true" />
+    <button type="button" class="credit-btn" *ngIf="question.imageCredit" (click)="creditOpen = !creditOpen" [attr.aria-expanded]="creditOpen" aria-label="Where this picture is from">i</button>
+    <figcaption class="credit" *ngIf="creditOpen && question.imageCredit as c">
+      <a [href]="c.url" target="_blank" rel="noopener">{{ c.text }}</a>
+    </figcaption>
+  </figure>
+  <!-- was: <img class="trivia-image" *ngIf="question.image" [src]="question.image" alt="" /> -->
 
   <h3 class="trivia-prompt">{{ question.prompt }}</h3>
 
@@ -37,7 +45,7 @@
     </button>
   </div>
   <p class="split-note" *ngIf="split && answerState !== 'unanswered' && split.answered > 1">
-    {{ split.answered }} players have answered this one.
+    {{ split.answered }} answered<!-- 11/21; was: {{ split.answered }} players have answered this one. -->
   </p>
 
   <p class="trivia-feedback" *ngIf="answerState === 'timeout'">Time's up!</p>

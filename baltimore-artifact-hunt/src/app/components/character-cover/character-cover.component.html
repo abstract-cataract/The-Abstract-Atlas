@@ -1,4 +1,5 @@
-<div class="cc-overlay play" [ngClass]="entrance" (click)="$event.target === $event.currentTarget && close()">
+<!-- 11/21: the landing starts once the pictures are loaded ("play" waits for ready), so it doesn't stutter on phones. was: class="cc-overlay play" -->
+<div class="cc-overlay" [class.play]="ready" [class.waiting]="!ready" [ngClass]="entrance" (click)="$event.target === $event.currentTarget && close()">
   <button type="button" class="cc-close" aria-label="Close" (click)="close()">&times;</button>
 
   <div class="cc-stage">

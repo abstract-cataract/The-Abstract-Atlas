@@ -37,6 +37,8 @@ export interface ServerQuestion {
   timeLimitSeconds: number;
   /** Picture to show above the question, if it has one. */
   image?: string;
+  /** 11/21: where the picture came from (the "i" button). */
+  imageCredit?: { text: string; url: string };
 }
 
 export interface StartResponse {

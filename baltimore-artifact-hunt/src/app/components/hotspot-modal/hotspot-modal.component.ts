@@ -69,6 +69,8 @@ export class HotspotModalComponent {
     // Reset every time a house is opened: to the view that house is for (the guide by default).
     if (this.active) this.view = this.startView;
     if (!this.active) this.coverIndex = null;
+    // 11/21: start downloading the character covers now, so they're ready by the time someone taps a person.
+    if (this.active) this.hotspot?.characters?.filter((c) => !c.comingSoon).forEach((c) => CharacterCoverComponent.preload(c));
   }
 
   showGuide() {

@@ -45,6 +45,8 @@ export class CharacterCoverComponent implements OnInit, OnDestroy {
   bgShift = '0px 0px';
   artShift = '0px 0px';
   flagShift = '0px 0px';
+  /** 11/21: true once the cover's pictures are loaded and decoded; the landing animation waits for it. */
+  ready = false;
 
   private tiltBase: { beta: number; gamma: number } | null = null;
   private readonly onTilt = (e: DeviceOrientationEvent) => {
@@ -71,6 +73,32 @@ export class CharacterCoverComponent implements OnInit, OnDestroy {
       this.doc.head.appendChild(link);
     }
     window.addEventListener('deviceorientation', this.onTilt);
+    void this.loadPictures();
+  }
+
+  /**
+   * 11/21: load and decode the pictures BEFORE the landing starts. Decoding big images in the middle of the
+   * coin flip is what made it stutter on phones. Waits at most 1.2s, then plays anyway.
+   */
+  private async loadPictures() {
+    const srcs = [this.character.coverBackground, this.character.coverFlag, this.character.coverArt, this.logoSrc].filter(
+      (s): s is string => !!s,
+    );
+    const decode = (src: string) =>
+      new Promise<void>((resolve) => {
+        const img = new Image();
+        img.src = src;
+        img.decode ? img.decode().then(() => resolve(), () => resolve()) : (img.onload = img.onerror = () => resolve());
+      });
+    await Promise.race([Promise.all(srcs.map(decode)), new Promise((r) => setTimeout(r, 1200))]);
+    this.ready = true;
+  }
+
+  /** 11/21: warm the browser cache with a character's cover pictures (called when the People list opens). */
+  static preload(c: Character) {
+    for (const src of [c.coverBackground, c.coverFlag, c.coverArt]) {
+      if (src) new Image().src = src;
+    }
   }
 
   ngOnDestroy() {

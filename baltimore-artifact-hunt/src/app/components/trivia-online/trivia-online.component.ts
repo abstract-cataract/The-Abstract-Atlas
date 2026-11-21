@@ -50,6 +50,10 @@ export class TriviaOnlineComponent implements OnChanges, OnDestroy {
   shareStatus = '';
   /** 11/20: the name your friend sees on the challenge. */
   shareName = '';
+  /** 11/21: the picture credit under the "i" button. */
+  creditOpen = false;
+  /** 11/21: a picture that won't load (e.g. offline) is hidden, credit and all. */
+  imageFailed = false;
   savingName = false;
   nameError = '';
 
@@ -114,6 +118,8 @@ export class TriviaOnlineComponent implements OnChanges, OnDestroy {
 
   private showQuestion(q: ServerQuestion) {
     this.question = q;
+    this.creditOpen = false; // 11/21
+    this.imageFailed = false;
     this.phase = 'question';
     this.answerState = 'unanswered';
     this.selectedChoice = null;

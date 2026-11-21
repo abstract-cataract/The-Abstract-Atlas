@@ -395,3 +395,28 @@
 .cc-story p {
   white-space: pre-line;
 }
+
+/* 11/21: smoother landing on phones */
+.cc-overlay.waiting .cc-cover,
+.cc-overlay.waiting .cc-story {
+  opacity: 0; /* hidden for the split second while the pictures load */
+}
+.play .cc-cover {
+  will-change: transform, opacity; /* let the phone's graphics chip do the flip */
+}
+.cc-bg,
+.cc-flag,
+.cc-art {
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+.play.coin .cc-logo-img {
+  filter: none; /* the logo's shadow is redrawn every frame while flipping; it comes back when the logo stamps in */
+  animation-name: cc-stamp, cc-logo-shadow;
+  animation-duration: 0.4s, 0.01s;
+  animation-delay: calc(var(--cc-coin-time) * 0.8), calc(var(--cc-coin-time) * 0.8);
+  animation-fill-mode: both, forwards;
+}
+@keyframes cc-logo-shadow {
+  to { filter: drop-shadow(0.6cqw 0.6cqw 0 #1a1410) drop-shadow(0 0 1.5cqw rgba(0, 0, 0, 0.6)); }
+}

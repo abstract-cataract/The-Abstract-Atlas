@@ -25,6 +25,8 @@ export interface TriviaQuestion {
   choiceResponses?: (string | null)[];
   /** 11/21: choices that still count as right, but for half the points (shown yellow). */
   halfCredit?: number[];
+  /** 11/21: where the picture came from (the small "i" on the picture). */
+  imageCredit?: { text: string; url: string };
 }
 
 export interface Badge {
