@@ -64,7 +64,7 @@ export const CITY_LOCATIONS: CityLocation[] = [
     id: 'university',
     cityId: 'charlotte',
     name: 'University City', // 11/20 release; was 'University'
-    tagline: 'Campus life and University City',
+    tagline: 'Where Education and Miseducation Collide',
     hotspotIds: ['university-beacon'],
   },
   // NoDa is off the map for now (11/11). Uncomment to bring it back.
@@ -340,14 +340,14 @@ export const HOTSPOTS: Hotspot[] = [
     name: 'University City', // 11/20 release; was 'University'
     category: 'landmark',
     // was: 'Campus life & University City'
-    knownFor: "UNC Charlotte, Partying, Late-night Fun",
+    knownFor: "GO NINERS!, Late-night Shenanigans, I don't think that sound was fireworks...",
     guideBlurb:
-      'The University City area around UNC Charlotte, north of Uptown, is where students, researchers, and neighbors share a fast-growing corner of the city.',
+      'University City - where education and miseducation take notes next to each other in class, and a school for schools.  ',
     story: {
       // was: 'The Gold Rush Scholars'
       title: "Now You See Me, Now You See Me Again",
-      body: 'PLACEHOLDER STORY COPY — replace with the official University City story.',
-      footer: '— a local University City legend',
+      body: 'Coming soon.',
+      footer: '',
     },
     challengeType: 'trivia',
     triviaQuestions: [
@@ -355,7 +355,7 @@ export const HOTSPOTS: Hotspot[] = [
       q("un-1", "If you lived in Belk Hall, which building would be a nightmare to walk to?", ["Duke Centennial Hall", "Atkins Library", "The Student Union", "Prospector"], 0, { image: "images/trivia/un-1.svg", wrongResponse: "Clearly you've never made that walk.", halfCredit: [3], choiceResponses: [null, null, null, "Ok, fine this one can count."] }),
       // was: q("un-1", "If you lived in Belk Hall, which building would be a nightmare to walk to?", ["Duke Centennial Hall", "Atkins Library", "The Student Union", "Prospector"], 0, { image: "images/trivia/un-1.svg", wrongResponse: "Clearly you've never made that walk." }),
       q("un-2", "What animal statue stands outside Woodward Hall?", ["An eagle", "A lion", "A horse", "A bear"], 0, { image: "images/trivia/un-2.svg" }),
-      q("un-3", "Which energy drink's trucks are always rolling around campus?", ["Red Bull", "Monster", "Celsius", "Bang"], 0, { image: "images/trivia/un-3.svg" }),
+      q("un-3", "Which energy drink's trucks are usually rolling around UNC Charlotte's campus?", ["Red Bull", "Monster", "Celsius", "Bang"], 0, { image: "images/trivia/un-3.svg" }),
       q("un-4", "Which building did a deer once smash its way out of?", ["Woodward Hall", "Atkins Library", "Belk Hall", "The Student Union"], 0, { image: "images/trivia/un-4.svg" }),
       // q("un-5", "UNC Charlotte's athletic teams are called the:", ["49ers", "Tar Heels", "Wolfpack", "Blue Devils"], 0, { image: "images/trivia/un-5.svg" }), // 11/20: 5 questions per location
       // q("un-6", "The '49ers' name nods to which part of the region's history?", ["The gold rush", "The railroad boom", "The tobacco trade", "The shipbuilding era"], 0, { image: "images/trivia/un-6.svg" }), // 11/20: 5 questions per location
@@ -384,9 +384,9 @@ export const HOTSPOTS: Hotspot[] = [
         story: 'Everywhere and not',
         // 11/19: Jules's full story (blank lines = new paragraphs)
         // 11/19 new bio; the previous one is kept in the comment below
-        fullStory: `Everything may seem normal.
+        fullStory: `Everything seems normal.
 
-You go about your day, foot by foot like everyone else.
+You go about your day, foot by foot like everyone else walking to and from classes.
 
 You get your cookout trays and Chex and wings, but damnit…something doesn't feel right.
 
@@ -395,7 +395,7 @@ No sauces in the bags. (Well, that's actually pretty normal.) Jamming your foot 
 Inconvenience after inconvenience, happening to you, happening to others…
 All the signs that he's around.
 
-Jules Redrun. You've probably seen him, maybe talked to him without knowing so, or thought you heard him speak - from here, there, everywhere… and not. Your barber, your bartender, your socks, your missing nail. Hell, he's probably your Honda Civic outside right now, but he's out there somewhere, blending into your world right before your eyes.
+Jules Redrun. You've probably seen him, maybe talked to him without knowing so, or thought you heard him speak - from here, there, everywhere… and not. Your barber, your bartender, your socks, your missing nail. He's at your cookout, tailgate, kickback. Hell, he's probably your Honda Civic outside right now, but he's out there somewhere, blending into your world right before your eyes.
 
 Oh, and he's always dressed for the occasion. Though, he could stand to switch up that tie every now and then.`,
         // was:         fullStory: `Everything may seem normal.
