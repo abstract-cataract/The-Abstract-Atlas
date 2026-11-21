@@ -387,3 +387,18 @@ describe('first run counts (11/20)', () => {
     expect(board.json.entries.find((e: any) => e.playerName === 'First').score).toBe(first.result.score);
   });
 });
+
+describe('half credit (11/21)', () => {
+  it('Prospector counts as right for half the points, with its own line', async () => {
+    const headers = user('half');
+    const start = await call('POST', '/challenges/university-beacon/start', { headers });
+    const q = start.json.question;
+    expect(q.id).toBe('un-1');
+    clock += 2000;
+    const res = await call('POST', '/challenges/university-beacon/answer', { headers, body: { attemptId: start.json.attemptId, choiceIndex: q.choices.indexOf('Prospector') } });
+    expect(res.json.correct).toBe(true);
+    expect(res.json.partial).toBe(true);
+    expect(res.json.pointsAwarded).toBe(Math.round((100 + 13 * 10) / 2));
+    expect(res.json.response).toBe('Ok, fine this one can count.');
+  });
+});

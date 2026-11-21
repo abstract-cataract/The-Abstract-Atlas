@@ -217,3 +217,10 @@
 }
 .share-name-row .online-btn { margin: 0; width: auto; flex: 0 0 auto; padding-left: 16px; padding-right: 16px; }
 .share-name-error { margin: 6px 0 0; font-size: 13px; color: #ffb3ab; }
+
+/* 11/21: half-credit answer (counts, half points) */
+.trivia-choice.partial {
+  background: #fff3b0;
+  border-color: #d4a017;
+}
+.trivia-choice.partial .split-bar { background: rgba(212, 160, 23, 0.3); }

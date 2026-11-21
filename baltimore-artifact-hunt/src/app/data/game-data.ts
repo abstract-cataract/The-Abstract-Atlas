@@ -351,7 +351,9 @@ export const HOTSPOTS: Hotspot[] = [
     },
     challengeType: 'trivia',
     triviaQuestions: [
-      q("un-1", "If you lived in Belk Hall, which building would be a nightmare to walk to?", ["Duke Centennial Hall", "Atkins Library", "The Student Union", "Prospector"], 0, { image: "images/trivia/un-1.svg", wrongResponse: "Clearly you've never made that walk." }),
+      // 11/21: Prospector counts too, for half points (yellow). choiceResponses lines up with the choices.
+      q("un-1", "If you lived in Belk Hall, which building would be a nightmare to walk to?", ["Duke Centennial Hall", "Atkins Library", "The Student Union", "Prospector"], 0, { image: "images/trivia/un-1.svg", wrongResponse: "Clearly you've never made that walk.", halfCredit: [3], choiceResponses: [null, null, null, "Ok, fine this one can count."] }),
+      // was: q("un-1", "If you lived in Belk Hall, which building would be a nightmare to walk to?", ["Duke Centennial Hall", "Atkins Library", "The Student Union", "Prospector"], 0, { image: "images/trivia/un-1.svg", wrongResponse: "Clearly you've never made that walk." }),
       q("un-2", "What animal statue stands outside Woodward Hall?", ["An eagle", "A lion", "A horse", "A bear"], 0, { image: "images/trivia/un-2.svg" }),
       q("un-3", "Which energy drink's trucks are always rolling around campus?", ["Red Bull", "Monster", "Celsius", "Bang"], 0, { image: "images/trivia/un-3.svg" }),
       q("un-4", "Which building did a deer once smash its way out of?", ["Woodward Hall", "Atkins Library", "Belk Hall", "The Student Union"], 0, { image: "images/trivia/un-4.svg" }),
@@ -452,8 +454,8 @@ Oh, and he's always dressed for the occasion. Though, he could stand to switch u
   },
 ];
 
-// Optional 5th argument: { image, wrongResponse, correctResponse, choiceResponses }. Example:
+// Optional 5th argument: { image, wrongResponse, correctResponse, choiceResponses, halfCredit }. Example:
 //   q('up-8', 'Which stop drops you off here?', ['CTC', ...], 0, { image: 'images/trivia/ctc.jpg', wrongResponse: "Ok, well that's DEFINITELY not right." })
-function q(id: string, prompt: string, choices: string[], correctIndex: number, extra: { image?: string; wrongResponse?: string; correctResponse?: string; choiceResponses?: (string | null)[] } = {}) {
+function q(id: string, prompt: string, choices: string[], correctIndex: number, extra: { image?: string; wrongResponse?: string; correctResponse?: string; choiceResponses?: (string | null)[]; halfCredit?: number[] } = {}) {
   return { id, prompt, choices, correctIndex, timeLimitSeconds: 15, ...extra }; // was 10
 }

@@ -16,6 +16,8 @@ export interface AnswerOutcome {
   timedOut: boolean;
   secondsLeft: number;
   points: number;
+  /** 11/21: picked a half-credit choice: counts as right, half the points. */
+  partial?: boolean;
 }
 
 export function scoreAnswer(opts: {
@@ -23,6 +25,8 @@ export function scoreAnswer(opts: {
   correctIndex: number;
   timeLimitSeconds: number;
   elapsedMs: number;
+  /** 11/21: choices worth half points that still count as right. */
+  halfCredit?: number[];
 }): AnswerOutcome {
   const { chosenIndex, correctIndex, timeLimitSeconds, elapsedMs } = opts;
   const timedOut = elapsedMs > timeLimitSeconds * 1000 + GRACE_MS;
@@ -31,6 +35,9 @@ export function scoreAnswer(opts: {
   }
   const secondsLeft = Math.max(0, Math.min(timeLimitSeconds, Math.floor(timeLimitSeconds - elapsedMs / 1000)));
   const correct = chosenIndex === correctIndex;
+  if (!correct && opts.halfCredit?.includes(chosenIndex)) {
+    return { correct: true, partial: true, timedOut: false, secondsLeft, points: Math.round((100 + secondsLeft * 10) / 2) };
+  }
   return { correct, timedOut: false, secondsLeft, points: correct ? 100 + secondsLeft * 10 : 0 };
 }
 

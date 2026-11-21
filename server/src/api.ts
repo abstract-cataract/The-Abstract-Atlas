@@ -313,6 +313,7 @@ export function createApi(deps: ApiDeps) {
       correctIndex: question.correctIndex,
       timeLimitSeconds: question.timeLimitSeconds,
       elapsedMs: Math.max(0, deps.now() - attempt.servedAt),
+      halfCredit: question.halfCredit, // 11/21
     });
     attempt.correct += outcome.correct ? 1 : 0;
     attempt.score += outcome.points;
@@ -325,6 +326,7 @@ export function createApi(deps: ApiDeps) {
       perChoice ?? (outcome.correct ? question.correctResponse : chosenOriginal !== null && !outcome.timedOut ? question.wrongResponse : undefined);
     const feedback = {
       correct: outcome.correct,
+      partial: outcome.partial ?? false, // 11/21: half credit
       timedOut: outcome.timedOut,
       correctIndex: order.indexOf(question.correctIndex),
       pointsAwarded: outcome.points,

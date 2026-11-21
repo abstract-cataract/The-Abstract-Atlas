@@ -24,6 +24,7 @@
       [class.selected]="selectedChoice === i"
       [class.correct]="answerState !== 'unanswered' && i === correctChoice"
       [class.incorrect]="answerState === 'incorrect' && selectedChoice === i"
+      [class.partial]="answerState === 'partial' && selectedChoice === i"
       [disabled]="answerState !== 'unanswered'"
       (click)="select(i)"
       [class.with-split]="split && answerState !== 'unanswered'"
@@ -41,6 +42,7 @@
 
   <p class="trivia-feedback" *ngIf="answerState === 'timeout'">Time's up!</p>
   <p class="trivia-feedback" *ngIf="answerState === 'correct'">Correct! 🎉</p>
+  <p class="trivia-feedback" *ngIf="answerState === 'partial'">Half points!</p><!-- 11/21 -->
   <p class="trivia-feedback" *ngIf="answerState === 'incorrect'">Not quite.</p>
   <!-- Tailored line for this answer, if the question has one. -->
   <p class="trivia-response" *ngIf="responseLine">{{ responseLine }}</p>

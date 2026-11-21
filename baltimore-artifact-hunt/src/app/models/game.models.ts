@@ -23,6 +23,8 @@ export interface TriviaQuestion {
   correctResponse?: string;
   /** Optional line per choice (same order as choices; null = use the lines above). Wins over the others. */
   choiceResponses?: (string | null)[];
+  /** 11/21: choices that still count as right, but for half the points (shown yellow). */
+  halfCredit?: number[];
 }
 
 export interface Badge {

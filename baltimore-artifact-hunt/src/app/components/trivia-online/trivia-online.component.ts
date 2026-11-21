@@ -7,7 +7,7 @@ import { ApiError, GameApiService } from '../../services/game-api.service';
 import { AuthUiService } from '../../services/auth-ui.service';
 import { ChallengeLinkService } from '../../services/challenge-link.service';
 
-type AnswerState = 'unanswered' | 'correct' | 'incorrect' | 'timeout';
+type AnswerState = 'unanswered' | 'correct' | 'partial' | 'incorrect' | 'timeout'; // 11/21: + 'partial'
 type Phase = 'loading' | 'question' | 'done' | 'error';
 
 /** How long right/wrong feedback shows before the next question. Must match FEEDBACK_MS in server/src/scoring.ts. */
@@ -139,7 +139,8 @@ export class TriviaOnlineComponent implements OnChanges, OnDestroy {
       const res = await this.api.answer(this.hotspot.id, this.attemptId, choiceIndex);
       if (run !== this.runId) return;
       this.correctChoice = res.correctIndex;
-      this.answerState = choiceIndex === null || res.timedOut ? 'timeout' : res.correct ? 'correct' : 'incorrect';
+      this.answerState = choiceIndex === null || res.timedOut ? 'timeout' : res.partial ? 'partial' : res.correct ? 'correct' : 'incorrect';
+      // was: this.answerState = choiceIndex === null || res.timedOut ? 'timeout' : res.correct ? 'correct' : 'incorrect';
       this.responseLine = res.response ?? null;
       this.split = res.split ?? null; // 11/20
       this.runningScore += res.pointsAwarded;

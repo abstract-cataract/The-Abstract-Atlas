@@ -108,6 +108,8 @@ export interface ChallengeResult {
 
 export interface AnswerResponse {
   correct: boolean;
+  /** 11/21: right-ish answer worth half points (shown yellow). */
+  partial?: boolean;
   timedOut: boolean;
   /** Index of the right answer in the order the choices were shown. */
   correctIndex: number;
