@@ -76,6 +76,37 @@ import { GameApiService } from '../../services/game-api.service';
         text-align: right;
         color: #c0392b;
       }
+
+      /* 11/22: always ONE line. On narrow phones everything shrinks a little (text, buttons, padding)
+         instead of the note wrapping and the pill jumping to two rows. 3.1vw = about 12px on an iPhone 14. */
+      .account-bar {
+        flex-wrap: nowrap; /* was wrap */
+        white-space: nowrap;
+        font-size: min(13px, 3.1vw);
+        gap: 0.6em;
+        padding: 0.6em 0.9em;
+      }
+      button {
+        font-size: 1em;
+        padding: 0.3em 0.85em;
+        flex: 0 0 auto;
+      }
+      .guest-note {
+        flex: 0 1 auto;
+        min-width: 0;
+      }
+      .error {
+        /* shown above the pill so it doesn't push the buttons around */
+        position: absolute;
+        right: 0;
+        bottom: calc(100% + 6px);
+        width: max-content;
+        max-width: calc(100vw - 28px);
+        white-space: normal;
+        padding: 4px 10px;
+        border-radius: 8px;
+        background: rgba(253, 246, 227, 0.95);
+      }
     `,
   ],
 })
