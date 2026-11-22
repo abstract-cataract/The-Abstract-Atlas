@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output } from '@angular/core';
-import { AnswerSplit, ChallengeResult, RunSummary, ServerQuestion } from '../../models/api.models';
+import { AnswerResponse, AnswerSplit, ChallengeResult, RunSummary, ServerQuestion } from '../../models/api.models';
 import { Hotspot } from '../../models/game.models';
 import { ApiError, GameApiService } from '../../services/game-api.service';
 import { AuthUiService } from '../../services/auth-ui.service';
@@ -11,7 +11,7 @@ type AnswerState = 'unanswered' | 'correct' | 'partial' | 'incorrect' | 'timeout
 type Phase = 'loading' | 'question' | 'done' | 'error';
 
 /** How long right/wrong feedback shows before the next question. Must match FEEDBACK_MS in server/src/scoring.ts. */
-const FEEDBACK_MS = 2500; // was 900: long enough to read a tailored line
+const FEEDBACK_MS = 2500; // was 900: long enough to read a tailored line. 11/21: not used now (Next button), kept for reference
 
 /**
  * Server-driven version of TriviaChallengeComponent. The server supplies the questions,
@@ -62,6 +62,11 @@ export class TriviaOnlineComponent implements OnChanges, OnDestroy {
   private runId = 0;
   private timerHandle: ReturnType<typeof setInterval> | null = null;
   private advanceHandle: ReturnType<typeof setTimeout> | null = null;
+  /** 11/21: the answer is in; the player taps Next (or See results) when they're done reading. */
+  private pendingAnswer: AnswerResponse | null = null;
+  loadingNext = false;
+  /** 11/21: trivia pictures are hidden for now. Set to true to bring them back. */
+  readonly showPictures = false;
 
   constructor(public api: GameApiService, private authUi: AuthUiService, private challengeLinks: ChallengeLinkService) {}
 
@@ -82,6 +87,7 @@ export class TriviaOnlineComponent implements OnChanges, OnDestroy {
     this.errorMessage = '';
     this.errorNeedsSignUp = false;
     this.runningScore = 0;
+    this.pendingAnswer = null; // 11/21
     this.rival = null;
     this.shareOpen = false;
     this.shareStatus = '';
@@ -150,17 +156,45 @@ export class TriviaOnlineComponent implements OnChanges, OnDestroy {
       this.responseLine = res.response ?? null;
       this.split = res.split ?? null; // 11/20
       this.runningScore += res.pointsAwarded;
-      this.advanceHandle = setTimeout(() => {
-        if (res.done && res.result) {
-          this.result = res.result;
-          this.phase = 'done';
-          this.finished.emit(res.result);
-        } else if (res.next) {
-          this.showQuestion(res.next);
-        }
-      }, FEEDBACK_MS);
+      // 11/21: no auto-advance. The Next / See results button calls next().
+      this.pendingAnswer = res;
+      // was: this.advanceHandle = setTimeout(() => { ...show the result or res.next... }, FEEDBACK_MS);
     } catch (e) {
       if (run === this.runId) this.fail(e);
+    }
+  }
+
+  /** 11/21: true once this question is answered and the Next / See results button should show. */
+  get canAdvance(): boolean {
+    return !!this.pendingAnswer && this.answerState !== 'unanswered';
+  }
+
+  get isLastQuestion(): boolean {
+    return !!this.pendingAnswer?.done;
+  }
+
+  /** 11/21: Next question / See results. The next question's 15 seconds start now. */
+  async next() {
+    const res = this.pendingAnswer;
+    if (!res || this.loadingNext) return;
+    if (res.done && res.result) {
+      this.pendingAnswer = null;
+      this.result = res.result;
+      this.phase = 'done';
+      this.finished.emit(res.result);
+      return;
+    }
+    this.loadingNext = true;
+    const run = this.runId;
+    try {
+      const q = await this.api.nextQuestion(this.hotspot.id, this.attemptId);
+      if (run !== this.runId) return;
+      this.pendingAnswer = null;
+      this.showQuestion(q);
+    } catch (e) {
+      if (run === this.runId) this.fail(e);
+    } finally {
+      this.loadingNext = false;
     }
   }
 

@@ -270,7 +270,8 @@ export const HOTSPOTS: Hotspot[] = [
     },
     questions: [
       // 11/21: Prospector counts too, for half points (yellow). choiceResponses lines up with the choices.
-      q("un-1", "If you lived in Belk Hall, which building would be a nightmare to walk to?", ["Duke Centennial Hall", "Atkins Library", "The Student Union", "Prospector"], 0, { image: "images/trivia/un-1.svg", wrongResponse: "Clearly you've never made that walk.", halfCredit: [3], choiceResponses: [null, null, null, "Ok, fine this one can count."] }),
+      // 11/21: the "Clearly you've never made that walk." wrong-answer line was taken out.
+      q("un-1", "If you lived in Belk Hall, which building would be a nightmare to walk to?", ["Duke Centennial Hall", "Atkins Library", "The Student Union", "Prospector"], 0, { image: "images/trivia/un-1.svg", halfCredit: [3], choiceResponses: [null, null, null, "Ok, fine this one can count."] }),
       // was: q("un-1", "If you lived in Belk Hall, which building would be a nightmare to walk to?", ["Duke Centennial Hall", "Atkins Library", "The Student Union", "Prospector"], 0, { image: "images/trivia/un-1.svg", wrongResponse: "Clearly you've never made that walk." }),
       q("un-2", "What animal statue stands outside Woodward Hall?", ["An eagle", "A lion", "A horse", "A bear"], 0, { image: "images/trivia/un-2.svg" }),
       q("un-3", "Which energy drink's trucks are usually rolling around UNC Charlotte's campus?", ["Red Bull", "Monster", "Celsius", "Bang"], 0, { image: "images/trivia/un-3.svg" }),

@@ -2,7 +2,7 @@ import type { APIGatewayProxyEventV2 } from 'aws-lambda';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { createApi } from '../src/api.js';
 import { getHotspot } from '../src/content.js';
-import { FEEDBACK_MS } from '../src/scoring.js';
+// import { FEEDBACK_MS } from '../src/scoring.js'; // 11/21: no longer needed (Next button)
 import { MemoryRepo } from './memoryRepo.js';
 
 // The guest location's challenge (Ridgely's again since the 11/20 release; Uptown for 11/17). Expected scores scale with its question count,
@@ -72,11 +72,11 @@ async function playRun(headers: Record<string, string>, hotspotId: string, opts:
     const original = hotspot.questions.find((q) => q.id === question.id)!;
     const correctText = original.choices[original.correctIndex];
     const choiceIndex = allCorrect ? question.choices.indexOf(correctText) : (question.choices.indexOf(correctText) + 1) % question.choices.length;
-    // A player sees the next question only after the feedback pause, then answers s seconds later.
-    clock += (i > 0 ? FEEDBACK_MS : 0) + secondsPerQuestion * 1000;
+    // The player taps Next, then answers s seconds later.
+    clock += secondsPerQuestion * 1000; // 11/21: the clock starts at Next, so no feedback pause to skip; was (i > 0 ? FEEDBACK_MS : 0) + ...
     last = await call('POST', `/challenges/${hotspotId}/answer`, { headers, body: { attemptId, choiceIndex } });
     expect(last.status).toBe(200);
-    question = last.json.next;
+    if (!last.json.done) question = (await call('POST', `/challenges/${hotspotId}/next`, { headers, body: { attemptId } })).json.question; // 11/21: Next button
   }
   expect(last.json.done).toBe(true);
   return last.json;
@@ -154,7 +154,7 @@ describe('guest flow', () => {
 });
 
 describe('question timing', () => {
-  it('does not charge the feedback pause against the next question', async () => {
+  it('starts the next question clock only when Next is tapped (11/21)', async () => {
     const headers = user('timer');
     const start = await call('POST', `/challenges/${GUEST_HS}/start`, { headers });
     const hs = getHotspot(GUEST_HS)!;
@@ -166,9 +166,13 @@ describe('question timing', () => {
     const r1 = await answer(start.json.question, correctShown(start.json.question));
     expect(r1.json.pointsAwarded).toBe(pts(1));
 
-    clock += 900; // client is still showing feedback; Q2 has not even appeared yet
-    const r2 = await answer(r1.json.next, correctShown(r1.json.next));
-    expect(r2.json.pointsAwarded).toBe(pts(0)); // elapsed clamps to 0, full time left
+    expect(r1.json.next).toBeUndefined(); // the next question only comes with Next
+    expect((await answer(start.json.question, 0)).json.error.code).toBe('NEXT_FIRST');
+    clock += 60_000; // the player reads the feedback for a whole minute
+    const n = await call('POST', `/challenges/${GUEST_HS}/next`, { headers, body: { attemptId: start.json.attemptId } });
+    clock += 2000; // then answers 2s after tapping Next
+    const r2 = await answer(n.json.question, correctShown(n.json.question));
+    expect(r2.json.pointsAwarded).toBe(pts(2)); // only the 2s count
   });
 });
 
@@ -343,9 +347,9 @@ describe('challenge a friend', () => {
     const hs = getHotspot(GUEST_HS)!;
     for (let i = 0; i < N; i++) {
       const original = hs.questions.find((x) => x.id === q.id)!;
-      clock += (i > 0 ? FEEDBACK_MS : 0) + 2000;
+      clock += 2000; // 11/21: was (i > 0 ? FEEDBACK_MS : 0) + 2000
       last = await call('POST', `/challenges/${GUEST_HS}/answer`, { headers: friend, body: { attemptId, choiceIndex: q.choices.indexOf(original.choices[original.correctIndex]) } });
-      q = last.json.next;
+      if (!last.json.done) q = (await call('POST', `/challenges/${GUEST_HS}/next`, { headers: friend, body: { attemptId } })).json.question; // 11/21
     }
     expect(last.json.result.versus.outcome).toBe('win');
     expect(last.json.result.versus.them.playerName).toBe('Iverson');

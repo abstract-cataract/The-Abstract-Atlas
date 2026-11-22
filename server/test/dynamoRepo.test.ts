@@ -6,7 +6,7 @@ import type { APIGatewayProxyEventV2 } from 'aws-lambda';
 import { describe, expect, it } from 'vitest';
 import { createApi } from '../src/api.js';
 import { getHotspot } from '../src/content.js';
-import { FEEDBACK_MS } from '../src/scoring.js';
+// import { FEEDBACK_MS } from '../src/scoring.js'; // 11/21: no longer needed (Next button)
 import { DynamoRepo } from '../src/dynamoRepo.js';
 import { HotspotResult } from '../src/types.js';
 import { FakeDoc } from './fakeDoc.js';
@@ -85,9 +85,9 @@ describe('guest -> account claim against the real DynamoRepo', () => {
     for (let i = 0; i < hotspot.questions.length; i++) {
       const original = hotspot.questions.find((q) => q.id === question.id)!;
       const choiceIndex = question.choices.indexOf(original.choices[original.correctIndex]);
-      clock += (i > 0 ? FEEDBACK_MS : 0) + 2000; // feedback pause, then answer after 2s
+      clock += 2000; // answer 2s after tapping Next (11/21; was FEEDBACK_MS + 2000)
       const res = await call('POST', '/challenges/ridgelys-beacon/answer', guest, { attemptId: start.json.attemptId, choiceIndex });
-      question = res.json.next;
+      if (!res.json.done) question = (await call('POST', '/challenges/ridgelys-beacon/next', guest, { attemptId: start.json.attemptId })).json.question; // 11/21
     }
 
     // Sign up (an account), claim the guest's progress.

@@ -14,7 +14,7 @@
 
   <!-- Picture for this question, if it has one. -->
   <!-- 11/21: picture with a small "i" that shows where it came from -->
-  <figure class="trivia-figure" *ngIf="question.image && !imageFailed">
+  <figure class="trivia-figure" *ngIf="showPictures && question.image && !imageFailed"><!-- 11/21: pictures hidden for now (showPictures) -->
     <img class="trivia-image" [src]="question.image" alt="" (error)="imageFailed = true" />
     <button type="button" class="credit-btn" *ngIf="question.imageCredit" (click)="creditOpen = !creditOpen" [attr.aria-expanded]="creditOpen" aria-label="Where this picture is from">i</button>
     <figcaption class="credit" *ngIf="creditOpen && question.imageCredit as c">
@@ -54,6 +54,11 @@
   <p class="trivia-feedback" *ngIf="answerState === 'incorrect'">Not quite.</p>
   <!-- Tailored line for this answer, if the question has one. -->
   <p class="trivia-response" *ngIf="responseLine">{{ responseLine }}</p>
+
+  <!-- 11/21: move on when ready (no auto-advance, no delay) -->
+  <button type="button" id="next-question" class="online-btn next-btn" *ngIf="canAdvance" [disabled]="loadingNext" (click)="next()">
+    {{ isLastQuestion ? 'See results' : 'Next question' }} →
+  </button>
 </div>
 
 <div class="trivia-results" *ngIf="phase === 'done' && result as r">

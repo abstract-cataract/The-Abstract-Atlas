@@ -40,6 +40,8 @@ export interface Attempt {
   elapsedMs?: number;
   /** 11/20: set when this run was started from a friend's challenge link. */
   challengeRunId?: string;
+  /** 11/21: answered; the next question's clock starts when the player taps Next. */
+  awaitingNext?: boolean;
 }
 
 /** 11/20: a finished run that can be shared as a challenge link (stored for 60 days). */

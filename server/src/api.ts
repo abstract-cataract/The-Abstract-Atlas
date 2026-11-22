@@ -6,6 +6,7 @@
 //   PATCH /me                                 { playerName }
 //   GET   /locations                          locations + whether the caller can play them
 //   POST  /challenges/:hotspotId/start        begin a run, returns question 1
+//   POST  /challenges/:hotspotId/next         11/21: the player tapped Next: returns the next question and starts its clock
 //                                             (11/20: optional { challengeRunId } plays a friend's exact run)
 //   POST  /challenges/:hotspotId/answer       { attemptId, choiceIndex|null } -> result + next question
 //   GET   /leaderboard/:locationId            top 10 registered players
@@ -183,7 +184,7 @@ export function createApi(deps: ApiDeps) {
       return reply(200, { locations: locationsView(caller, results) });
     }
 
-    const challenge = /^\/challenges\/([\w-]+)\/(start|answer)$/.exec(path);
+    const challenge = /^\/challenges\/([\w-]+)\/(start|answer|next)$/.exec(path); // 11/21: + next
     if (method === 'POST' && challenge) {
       const c = requireCaller(caller);
       const hotspot = getHotspot(challenge[1]!);
@@ -195,6 +196,7 @@ export function createApi(deps: ApiDeps) {
           unlockedBySignUp: locationsUnlockedBySignUp(),
         });
       }
+      if (challenge[2] === 'next') return nextQuestion(c, hotspot, parseBody(event)); // 11/21
       return challenge[2] === 'start' ? startChallenge(c, hotspot, parseBody(event)) : answerChallenge(c, hotspot, parseBody(event));
       // was: return challenge[2] === 'start' ? startChallenge(c, hotspot) : answerChallenge(c, hotspot, parseBody(event));
     }
@@ -263,6 +265,25 @@ export function createApi(deps: ApiDeps) {
     });
   }
 
+  /** 11/21: the player tapped Next: send the next question and start its clock now. */
+  async function nextQuestion(caller: Caller, hotspot: Hotspot, body: Record<string, unknown>) {
+    const { attemptId } = body;
+    if (typeof attemptId !== 'string' || attemptId.length > LIMITS.attemptIdMax) {
+      throw new HttpError(400, 'BAD_REQUEST', 'attemptId is required.');
+    }
+    const attempt = await repo.getAttempt(caller.playerId, hotspot.id);
+    if (!attempt || attempt.attemptId !== attemptId) {
+      throw new HttpError(409, 'ATTEMPT_NOT_FOUND', 'This run has ended or was replaced. Start the challenge again.');
+    }
+    if (attempt.awaitingNext) {
+      attempt.awaitingNext = false;
+      attempt.servedAt = deps.now();
+      await repo.putAttempt(caller.playerId, attempt);
+    }
+    // Already showing (e.g. a double tap): same question, and its clock keeps running.
+    return reply(200, { question: questionPayload(attempt, hotspot) });
+  }
+
   /** 11/20: the public part of a run (no choice order, no player id), with the player's current name. */
   async function runSummary(run: Run): Promise<RunSummary> {
     const { choiceOrders: _hidden, playerId, ...summary } = run;
@@ -299,6 +320,7 @@ export function createApi(deps: ApiDeps) {
     if (!attempt || attempt.attemptId !== attemptId) {
       throw new HttpError(409, 'ATTEMPT_NOT_FOUND', 'This run has ended or was replaced. Start the challenge again.');
     }
+    if (attempt.awaitingNext) throw new HttpError(409, 'NEXT_FIRST', 'Tap Next to see the next question.'); // 11/21
 
     const question = hotspot.questions[attempt.questionIndex]!;
     const order = attempt.choiceOrders[attempt.questionIndex]!;
@@ -338,10 +360,13 @@ export function createApi(deps: ApiDeps) {
     };
 
     if (attempt.questionIndex < hotspot.questions.length - 1) {
+      // 11/21: the player reads the feedback as long as they like; the next question (and its clock)
+      // comes when they tap Next (POST /next). So the question isn't sent here.
       attempt.questionIndex += 1;
-      attempt.servedAt = deps.now() + FEEDBACK_MS;
+      attempt.awaitingNext = true;
       await repo.putAttempt(caller.playerId, attempt);
-      return reply(200, { ...feedback, done: false, next: questionPayload(attempt, hotspot) });
+      return reply(200, { ...feedback, done: false });
+      // was: attempt.servedAt = deps.now() + FEEDBACK_MS; ... return reply(200, { ...feedback, done: false, next: questionPayload(attempt, hotspot) });
     }
 
     const result = await finishChallenge(caller, hotspot, attempt);

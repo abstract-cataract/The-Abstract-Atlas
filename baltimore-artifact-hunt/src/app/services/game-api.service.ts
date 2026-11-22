@@ -6,6 +6,7 @@ import {
   LocationView,
   MeResponse,
   RunSummary,
+  ServerQuestion,
   StartResponse,
 } from '../models/api.models';
 import { AuthService } from './auth.service';
@@ -138,6 +139,12 @@ export class GameApiService {
     const res = await this.request<AnswerResponse>('POST', `/challenges/${hotspotId}/answer`, { attemptId, choiceIndex });
     if (res.done) void this.refresh().catch(() => undefined); // picks up the new badge + unlocked state
     return res;
+  }
+
+  /** 11/21: the player tapped Next: get the next question (its clock starts now). */
+  async nextQuestion(hotspotId: string, attemptId: string): Promise<ServerQuestion> {
+    const res = await this.request<{ question: ServerQuestion }>('POST', `/challenges/${hotspotId}/next`, { attemptId });
+    return res.question;
   }
 
   async getLeaderboard(locationId: string): Promise<LeaderboardRow[]> {
