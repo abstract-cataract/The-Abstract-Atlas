@@ -23,6 +23,12 @@ import { HotspotModalComponent, ModalView } from '../hotspot-modal/hotspot-modal
  * A house in the scene (11/11): houses are things to do, not places. Each location gets a Trivia house and a
  * Story house, plus a People house once it has a character. All use the same house icon for now.
  */
+/**
+ * 11/22: once tilt is allowed it stays allowed while the game is open (iPhone remembers the permission until
+ * the page reloads), so the "Enable tilt" button shouldn't come back every time you go Home and back.
+ */
+let tiltGranted = false;
+
 export interface SceneHouse {
   /** Unique per house: '<hotspot id>-trivia' etc. The element id is 'beacon-' + this. */
   id: string;
@@ -92,6 +98,8 @@ export class LocationSceneComponent implements OnInit, AfterViewInit, OnDestroy 
     this.isTouch = typeof window !== 'undefined' && window.matchMedia?.('(hover: none) and (pointer: coarse)').matches === true;
     this.needsTiltPermission =
       this.isTouch && typeof (window as any).DeviceOrientationEvent?.requestPermission === 'function';
+    this.tiltEnabled = tiltGranted; // 11/22: already allowed earlier in this visit: no button
+    if (this.needsTiltPermission && !tiltGranted) this.watchForTilt();
 
     // City scene (/city/:cityId): a synthetic "location" stands in for the city so the heading works,
     // and the houses are every hotspot of the city's locations.
@@ -179,6 +187,18 @@ export class LocationSceneComponent implements OnInit, AfterViewInit, OnDestroy 
     this.parallaxInstance?.enable?.();
   }
 
+  /** 11/22: if tilt readings are already arriving (permission still on from before), hide the button. */
+  private watchForTilt() {
+    const onTilt = (e: DeviceOrientationEvent) => {
+      if (e.beta === null && e.gamma === null) return;
+      window.removeEventListener('deviceorientation', onTilt);
+      tiltGranted = true;
+      this.tiltEnabled = true;
+    };
+    window.addEventListener('deviceorientation', onTilt);
+    setTimeout(() => window.removeEventListener('deviceorientation', onTilt), 3000);
+  }
+
   /** "Enable tilt" button (iOS 13+ asks permission for motion sensors, and only from a tap). */
   async enableTilt() {
     this.tiltDenied = false;
@@ -188,10 +208,16 @@ export class LocationSceneComponent implements OnInit, AfterViewInit, OnDestroy 
         .map((E) => E.requestPermission() as Promise<string>);
       const answers = await Promise.all(requests);
       if (answers.some((a) => a !== 'granted')) throw new Error('denied');
-      this.tiltEnabled = true;
-      this.startParallax(); // rebuild so it starts listening now that events will arrive
     } catch {
       this.tiltDenied = true;
+      return;
+    }
+    this.tiltEnabled = true;
+    tiltGranted = true; // 11/22: remember for the rest of the visit
+    try {
+      this.startParallax(); // rebuild so it starts listening now that events will arrive
+    } catch (e) {
+      console.error('parallax restart failed', e); // 11/22: not a permission problem, so don't show "blocked"
     }
   }
 
