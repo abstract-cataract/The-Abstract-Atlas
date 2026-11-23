@@ -211,8 +211,8 @@ export const HOTSPOTS: Hotspot[] = [
       q("rd-5", "When a home run lands on Eutaw Street, what marks the spot?", ["A bronze plaque in the ground", "An orange painted O", "A brick with the batter's name", "Nothing. They keep the ball"], 0, { image: "images/trivia/rd-5.svg", wrongResponse: "Nah! Look down next time you're walking Eutaw." }),
       // 11/23: + wrongResponse
       q("rd-6", "Who is the only player to hit the B&O Warehouse on the fly?", ["Ken Griffey Jr.", "Cal Ripken Jr.", "Mark McGwire", "Chris Davis"], 0, { image: "images/trivia/rd-6.svg", wrongResponse: "Only one person has ever done it, and it wasn't them." }),
-      // 11/23: + wrongResponse
-      q("rd-7", "During the national anthem at an Orioles game, what do fans shout at \"Oh, say does that star-spangled...\"?", ["\"O!\"", "\"Birds!\"", "\"Hon!\"", "\"Play ball!\""], 0, { image: "images/trivia/rd-7.svg", correctResponse: "The most electric, spine-chilling sound in baseball!" }),
+      // 11/23: + response lines; question was "...what do fans shout at \"Oh, say does that star-spangled...\"?"
+      q("rd-7", "During the national anthem at a Baltimore Orioles game, what do fans yell at one part?", ["\"O!\"", "\"Birds!\"", "\"Hon!\"", "\"Play ball!\""], 0, { image: "images/trivia/rd-7.svg", correctResponse: "The most electric, spine-chilling sound in baseball!", wrongResponse: "\"O!\" - say does that star-spangled..." }),
       // q("rd-8", "Which former Oriole has a barbecue stand on Eutaw Street?", ["Boog Powell", "Brooks Robinson", "Jim Palmer", "Eddie Murray"], 0, { image: "images/trivia/rd-8.svg" }), // 11/20: Ridgely's has 5 questions
       // q("rd-9", "In 1792, part of the Ridgely's Delight land was renamed Fayetteville to honor which French hero?", ["The Marquis de Lafayette", "Napoleon", "Rochambeau", "Joan of Arc"], 0, { image: "images/trivia/rd-9.svg" }), // 11/20: Ridgely's has 5 questions
       // q("rd-10", "Which train station sits right by Ridgely's, behind the warehouse?", ["Camden Station", "Penn Station", "President Street Station", "Union Station"], 0, { image: "images/trivia/rd-10.svg" }), // 11/20: Ridgely's has 5 questions
