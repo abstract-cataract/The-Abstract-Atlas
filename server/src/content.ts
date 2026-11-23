@@ -186,15 +186,20 @@ export const HOTSPOTS: Hotspot[] = [
       description: "Awarded for completing the Ridgely's challenge.",
     },
     questions: [
-      q("rd-1", "Which baseball legend was born on Emory Street in Ridgely's Delight?", ["Babe Ruth", "Cal Ripken Jr.", "Jackie Robinson", "Lou Gehrig"], 0, { image: "images/trivia/rd-1.svg" }),
+      // 11/23: + wrongResponse
+      q("rd-1", "Which baseball legend was born on Emory Street in Ridgely's Delight?", ["Babe Ruth", "Cal Ripken Jr.", "Jackie Robinson", "Lou Gehrig"], 0, { image: "images/trivia/rd-1.svg", wrongResponse: "Not quite." }),
       // q("rd-2", "Babe Ruth's father ran a saloon on Conway Street. What part of Camden Yards sits there now?", ["Left-center field", "Home plate", "The visitors' dugout", "The Eutaw Street warehouse"], 0, { image: "images/trivia/rd-2.svg" }), // 11/20: Ridgely's has 5 questions
       // q("rd-3", "Two stadiums sit a short walk from Ridgely's. Which teams play in them?", ["The Orioles and the Ravens", "The Orioles and the Colts", "The Nationals and the Ravens", "The Orioles and the Blast"], 0, { image: "images/trivia/rd-3.svg" }), // 11/20: Ridgely's has 5 questions
       // 11/21: replaces the "Maryland" question (kept below). Photo from Wikimedia Commons (CC BY-SA 3.0): both stadiums are on the left.
-      q("rd-11", "How far apart are the Orioles' stadium and the Ravens' stadium?", ["Right next door", "About a mile apart", "Across the harbor", "Opposite ends of the city"], 0, { image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Baltimore_Aerial.JPG/1024px-Baltimore_Aerial.JPG", imageCredit: { text: "Photo by Fletcher6, Wikimedia Commons, CC BY-SA 3.0", url: "https://commons.wikimedia.org/wiki/File:Baltimore_Aerial.JPG" } }),
+      // 11/23: + wrongResponse
+      q("rd-11", "How far apart are the Orioles' stadium and the Ravens' stadium?", ["Right next door", "About a mile apart", "Across the harbor", "Opposite ends of the city"], 0, { image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Baltimore_Aerial.JPG/1024px-Baltimore_Aerial.JPG", imageCredit: { text: "Photo by Fletcher6, Wikimedia Commons, CC BY-SA 3.0", url: "https://commons.wikimedia.org/wiki/File:Baltimore_Aerial.JPG" }, wrongResponse: "Nope! If you stand close enough to either stadium, you can hear the birds in the other one. They're only about 3 blocks apart!" }),
       // was: q("rd-4", "How does a born-and-raised Baltimorean say 'Maryland'?", ["Merlin", "Mary-land", "Mare-uh-land", "Murr-land"], 0, { image: "images/trivia/rd-4.svg", wrongResponse: "Hon, nobody from Baltimore says it like that." }),
-      q("rd-5", "When a home run lands on Eutaw Street, what marks the spot?", ["A bronze plaque in the ground", "An orange painted O", "A brick with the batter's name", "Nothing. They keep the ball"], 0, { image: "images/trivia/rd-5.svg" }),
-      q("rd-6", "Who is the only player to hit the B&O Warehouse on the fly?", ["Ken Griffey Jr.", "Cal Ripken Jr.", "Mark McGwire", "Chris Davis"], 0, { image: "images/trivia/rd-6.svg" }),
-      q("rd-7", "During the national anthem at an Orioles game, what do fans shout at \"Oh, say does that star-spangled...\"?", ["\"O!\"", "\"Birds!\"", "\"Hon!\"", "\"Play ball!\""], 0, { image: "images/trivia/rd-7.svg" }),
+      // 11/23: + wrongResponse
+      q("rd-5", "When a home run lands on Eutaw Street, what marks the spot?", ["A bronze plaque in the ground", "An orange painted O", "A brick with the batter's name", "Nothing. They keep the ball"], 0, { image: "images/trivia/rd-5.svg", wrongResponse: "Look down next time you're walking Eutaw." }),
+      // 11/23: + wrongResponse
+      q("rd-6", "Who is the only player to hit the B&O Warehouse on the fly?", ["Ken Griffey Jr.", "Cal Ripken Jr.", "Mark McGwire", "Chris Davis"], 0, { image: "images/trivia/rd-6.svg", wrongResponse: "Only one person has ever done it, and it wasn't them." }),
+      // 11/23: + wrongResponse
+      q("rd-7", "During the national anthem at an Orioles game, what do fans shout at \"Oh, say does that star-spangled...\"?", ["\"O!\"", "\"Birds!\"", "\"Hon!\"", "\"Play ball!\""], 0, { image: "images/trivia/rd-7.svg", wrongResponse: "The most electric, spine-chilling sound in baseball!" }),
       // q("rd-8", "Which former Oriole has a barbecue stand on Eutaw Street?", ["Boog Powell", "Brooks Robinson", "Jim Palmer", "Eddie Murray"], 0, { image: "images/trivia/rd-8.svg" }), // 11/20: Ridgely's has 5 questions
       // q("rd-9", "In 1792, part of the Ridgely's Delight land was renamed Fayetteville to honor which French hero?", ["The Marquis de Lafayette", "Napoleon", "Rochambeau", "Joan of Arc"], 0, { image: "images/trivia/rd-9.svg" }), // 11/20: Ridgely's has 5 questions
       // q("rd-10", "Which train station sits right by Ridgely's, behind the warehouse?", ["Camden Station", "Penn Station", "President Street Station", "Union Station"], 0, { image: "images/trivia/rd-10.svg" }), // 11/20: Ridgely's has 5 questions
@@ -271,18 +276,23 @@ export const HOTSPOTS: Hotspot[] = [
     questions: [
       // 11/21: Prospector counts too, for half points (yellow). choiceResponses lines up with the choices.
       // 11/21: the "Clearly you've never made that walk." wrong-answer line was taken out.
-      q("un-1", "If you lived in Belk Hall, which building would be a nightmare to walk to?", ["Duke Centennial Hall", "Atkins Library", "The Student Union", "Prospector"], 0, { image: "images/trivia/un-1.svg", halfCredit: [3], choiceResponses: [null, null, null, "Ok, fine this one can count."] }),
+      // 11/23: + wrongResponse
+      q("un-1", "If you lived in Belk Hall, which building would be a nightmare to walk to?", ["Duke Centennial Hall", "Atkins Library", "The Student Union", "Prospector"], 0, { image: "images/trivia/un-1.svg", halfCredit: [3], choiceResponses: [null, null, null, "Ok, fine this one can count."], wrongResponse: "That's a stroll. Duke Centennial is a journey." }),
       // was: q("un-1", "If you lived in Belk Hall, which building would be a nightmare to walk to?", ["Duke Centennial Hall", "Atkins Library", "The Student Union", "Prospector"], 0, { image: "images/trivia/un-1.svg", wrongResponse: "Clearly you've never made that walk." }),
-      q("un-2", "What animal statue stands outside Woodward Hall?", ["An eagle", "A lion", "A horse", "A bear"], 0, { image: "images/trivia/un-2.svg" }),
-      q("un-3", "Which energy drink's trucks are usually rolling around UNC Charlotte's campus?", ["Red Bull", "Monster", "Celsius", "Bang"], 0, { image: "images/trivia/un-3.svg" }),
+      // 11/23: + wrongResponse
+      q("un-2", "What animal statue stands outside Woodward Hall?", ["An eagle", "A lion", "A horse", "A bear"], 0, { image: "images/trivia/un-2.svg", wrongResponse: "Walk past Woodward one more time." }),
+      // 11/23: + wrongResponse
+      q("un-3", "Which energy drink's trucks are usually rolling around UNC Charlotte's campus?", ["Red Bull", "Monster", "Celsius", "Bang"], 0, { image: "images/trivia/un-3.svg", wrongResponse: "Close, but they're blue and silver with a can on the back." }),
       // was: q("un-3", "Which energy drink's trucks are always rolling around campus?", ...) (11/21: matched to your edit in game-data.ts)
-      q("un-4", "Which building did a deer once smash its way out of?", ["Woodward Hall", "Atkins Library", "Belk Hall", "The Student Union"], 0, { image: "images/trivia/un-4.svg" }),
+      // 11/23: + wrongResponse
+      q("un-4", "Which building did a deer once smash its way out of?", ["Woodward Hall", "Atkins Library", "Belk Hall", "The Student Union"], 0, { image: "images/trivia/un-4.svg", wrongResponse: "Not exactly. This deer had an interest in Computing and Informatics. It was there for some buck-end development." }),
       // q("un-5", "UNC Charlotte's athletic teams are called the:", ["49ers", "Tar Heels", "Wolfpack", "Blue Devils"], 0, { image: "images/trivia/un-5.svg" }), // 11/20: 5 questions per location
       // q("un-6", "The '49ers' name nods to which part of the region's history?", ["The gold rush", "The railroad boom", "The tobacco trade", "The shipbuilding era"], 0, { image: "images/trivia/un-6.svg" }), // 11/20: 5 questions per location
       // q("un-7", "UNC Charlotte began in 1946 as a college center for returning:", ["World War II veterans", "Bank employees", "Textile workers", "Race car drivers"], 0, { image: "images/trivia/un-7.svg" }), // 11/20: 5 questions per location
       // q("un-8", "Which light rail line was extended to UNC Charlotte in 2018?", ["The LYNX Blue Line", "The Red Line", "The Orange Line", "The Gold Line"], 0, { image: "images/trivia/un-8.svg" }), // 11/20: 5 questions per location
       // q("un-9", "The area around the campus, north of Uptown, is often called:", ["University City", "Old Town", "Harbor District", "The Heights"], 0, { image: "images/trivia/un-9.svg" }), // 11/20: 5 questions per location
-      q("un-10", "What's the name of UNC Charlotte's mascot?", ["Norm the Niner", "Rocky the Ram", "Sammy the Miner", "Goldie the Prospector"], 0, { image: "images/trivia/un-10.svg" }),
+      // 11/23: + wrongResponse
+      q("un-10", "What's the name of UNC Charlotte's mascot?", ["Norm the Niner", "Rocky the Ram", "Sammy the Miner", "Goldie the Prospector"], 0, { image: "images/trivia/un-10.svg", wrongResponse: "Norm would not approve of this!" }),
       // Before 11/12 (kept for reference):
       // q('un-1', "UNC Charlotte's athletic teams are called the:", ['49ers', 'Tar Heels', 'Wolfpack', 'Blue Devils'], 0),
       // q('un-2', "The '49ers' name nods to which part of the region's history?", ['The gold rush', 'The railroad boom', 'The tobacco trade', 'The shipbuilding era'], 0),
