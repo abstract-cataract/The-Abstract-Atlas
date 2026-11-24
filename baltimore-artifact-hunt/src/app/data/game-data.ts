@@ -397,10 +397,10 @@ export const HOTSPOTS: Hotspot[] = [
         story: 'Everywhere and not',
         // 11/19: Jules's full story (blank lines = new paragraphs)
         // 11/19 new bio; the previous one is kept in the comment below
-        // 11/23: the 11/21 story with only its "You've probably seen him" paragraph updated (11/22 had replaced the whole story by mistake)
+        // 11/23: Jules's story
         fullStory: `Everything seems normal.
 
-You go about your day, foot by foot like everyone else walking to and from classes.
+You go about your day, foot by foot, car by bike, scooter by bus like everyone else.
 
 You get your cookout trays and Chex and wings, but damnit…something doesn't feel right.
 
@@ -411,7 +411,21 @@ All the signs that he's around.
 
 You've probably seen him, maybe talked to him without knowing so, or thought you heard his voice - from over here, there, everywhere… and not. Your barber, your bartender, your socks, your missing eye lash. He could be at your cook out, your friend's wedding, your dog's house. Hell, he's probably your Honda Civic outside right now, but he's out there somewhere, blending into your world right before your eyes. Jules Redrun, of just about everywhere, but a local of University City.
 
-Oh, and he's always dressed for the occasion. Though, he could stand to switch up that tie every now and then.`,
+And he's always dressed for the occasion. Though, he could stand to switch up that tie every now and then.`,
+        // was (11/23 earlier):         fullStory: `Everything seems normal.
+        //
+        // was (11/23 earlier): You go about your day, foot by foot like everyone else walking to and from classes.
+        //
+        // was (11/23 earlier): You get your cookout trays and Chex and wings, but damnit…something doesn't feel right.
+        //
+        // was (11/23 earlier): No sauces in the bags. (Well, that's actually pretty normal.) Jamming your foot into something you tried to avoid, losing your keys to the car when you're already late.
+        //
+        // was (11/23 earlier): Inconvenience after inconvenience, happening to you, happening to others…
+        // was (11/23 earlier): All the signs that he's around.
+        //
+        // was (11/23 earlier): You've probably seen him, maybe talked to him without knowing so, or thought you heard his voice - from over here, there, everywhere… and not. Your barber, your bartender, your socks, your missing eye lash. He could be at your cook out, your friend's wedding, your dog's house. Hell, he's probably your Honda Civic outside right now, but he's out there somewhere, blending into your world right before your eyes. Jules Redrun, of just about everywhere, but a local of University City.
+        //
+        // was (11/23 earlier): Oh, and he's always dressed for the occasion. Though, he could stand to switch up that tie every now and then.`,
         // was (11/21):         fullStory: `Everything seems normal.
         //
         // was (11/21): You go about your day, foot by foot like everyone else walking to and from classes.
